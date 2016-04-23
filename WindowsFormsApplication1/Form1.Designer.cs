@@ -36,10 +36,11 @@
             this.minXtextBox3 = new System.Windows.Forms.TextBox();
             this.maxXtextBox4 = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
+            this.button2Stop = new System.Windows.Forms.Button();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.button2Stop = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -59,7 +60,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1222, 499);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(784, 561);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // ResulttextBox1
@@ -71,7 +72,7 @@
             this.ResulttextBox1.Name = "ResulttextBox1";
             this.ResulttextBox1.ReadOnly = true;
             this.ResulttextBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.ResulttextBox1.Size = new System.Drawing.Size(1216, 433);
+            this.ResulttextBox1.Size = new System.Drawing.Size(778, 495);
             this.ResulttextBox1.TabIndex = 4;
             this.toolTip1.SetToolTip(this.ResulttextBox1, "Сгенерированное уравнение");
             // 
@@ -85,32 +86,35 @@
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(1216, 34);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(778, 34);
             this.flowLayoutPanel1.TabIndex = 2;
             // 
             // coutXtextBox2
             // 
+            this.coutXtextBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.coutXtextBox2.Location = new System.Drawing.Point(3, 3);
             this.coutXtextBox2.Name = "coutXtextBox2";
-            this.coutXtextBox2.Size = new System.Drawing.Size(100, 20);
+            this.coutXtextBox2.Size = new System.Drawing.Size(100, 29);
             this.coutXtextBox2.TabIndex = 0;
             this.coutXtextBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.toolTip1.SetToolTip(this.coutXtextBox2, "Введите количество n (x1.....xn)");
             // 
             // minXtextBox3
             // 
+            this.minXtextBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.minXtextBox3.Location = new System.Drawing.Point(109, 3);
             this.minXtextBox3.Name = "minXtextBox3";
-            this.minXtextBox3.Size = new System.Drawing.Size(100, 20);
+            this.minXtextBox3.Size = new System.Drawing.Size(100, 29);
             this.minXtextBox3.TabIndex = 1;
             this.minXtextBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.toolTip1.SetToolTip(this.minXtextBox3, "Введите минимальное значение Х");
             // 
             // maxXtextBox4
             // 
+            this.maxXtextBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.maxXtextBox4.Location = new System.Drawing.Point(215, 3);
             this.maxXtextBox4.Name = "maxXtextBox4";
-            this.maxXtextBox4.Size = new System.Drawing.Size(100, 20);
+            this.maxXtextBox4.Size = new System.Drawing.Size(100, 29);
             this.maxXtextBox4.TabIndex = 2;
             this.maxXtextBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.toolTip1.SetToolTip(this.maxXtextBox4, "Введите максимальное значение Х");
@@ -119,22 +123,33 @@
             // 
             this.button1.Location = new System.Drawing.Point(321, 3);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(176, 20);
+            this.button1.Size = new System.Drawing.Size(150, 29);
             this.button1.TabIndex = 3;
             this.button1.Text = "Генерировать уравнение";
             this.toolTip1.SetToolTip(this.button1, "Нажмите сюда, чтобы сгенировать новое уравнение");
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // button2Stop
+            // 
+            this.button2Stop.Location = new System.Drawing.Point(477, 3);
+            this.button2Stop.Name = "button2Stop";
+            this.button2Stop.Size = new System.Drawing.Size(123, 29);
+            this.button2Stop.TabIndex = 4;
+            this.button2Stop.Text = "Остановить расчет";
+            this.button2Stop.UseVisualStyleBackColor = true;
+            this.button2Stop.Click += new System.EventHandler(this.button2Stop_Click);
+            // 
             // toolStrip1
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripProgressBar1});
+            this.toolStripProgressBar1,
+            this.toolStripLabel1});
             this.toolStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
-            this.toolStrip1.Location = new System.Drawing.Point(0, 479);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 541);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1222, 20);
+            this.toolStrip1.Size = new System.Drawing.Size(784, 20);
             this.toolStrip1.TabIndex = 3;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -143,26 +158,22 @@
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
             this.toolStripProgressBar1.Size = new System.Drawing.Size(300, 17);
             // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(76, 15);
+            this.toolStripLabel1.Text = "Ввод данных";
+            // 
             // toolTip1
             // 
             this.toolTip1.IsBalloon = true;
             this.toolTip1.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             // 
-            // button2Stop
-            // 
-            this.button2Stop.Location = new System.Drawing.Point(503, 3);
-            this.button2Stop.Name = "button2Stop";
-            this.button2Stop.Size = new System.Drawing.Size(75, 23);
-            this.button2Stop.TabIndex = 4;
-            this.button2Stop.Text = "Остановить расчет";
-            this.button2Stop.UseVisualStyleBackColor = true;
-            this.button2Stop.Click += new System.EventHandler(this.button2Stop_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1222, 499);
+            this.ClientSize = new System.Drawing.Size(784, 561);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "Form1";
             this.Text = "Генератор уравнений";
@@ -189,6 +200,7 @@
         private System.Windows.Forms.TextBox maxXtextBox4;
         public System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
         private System.Windows.Forms.Button button2Stop;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
     }
 }
 

@@ -21,7 +21,7 @@ namespace WindowsFormsApplication1
         }
 
         /// <summary>
-        /// единый рандом
+        /// единый рандом на весь класс
         /// </summary>
         Random random;
 
@@ -49,6 +49,13 @@ namespace WindowsFormsApplication1
                 coutXtextBox2.SelectAll();
                 return; //выходим из текущего метода
             }
+            if (lenXN < 0)
+            {
+                MessageBox.Show("Как вы себе представляете отрицательную длинну? Исправляйте", "", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                coutXtextBox2.Focus();
+                coutXtextBox2.SelectAll();
+                return;
+            }
             if (lenXN <= 4)
             {
                 MessageBox.Show("Длинна массива переменных должна быть >= 5, в противном случае в этой программе нет смысла, а посему делайте свое уравнение сами", "", MessageBoxButtons.OK, MessageBoxIcon.Stop);
@@ -60,12 +67,13 @@ namespace WindowsFormsApplication1
             ResulttextBox1.Clear();
             thr = new Thread(delegate()
             {
+                Invoke(new AddMessageDelegate(ExcelentRes), new object[] { "Расчет выполняется" });
                 String[] arrayxxxXN = getXNtoIArray(lenXN, min_X, max_X); //формируем массив Xв для выдачи на экран
                 Invoke(new AddMessageDelegate(LogAdd), new object[] { "30" });
-                arrayxxxXN = getPrewFinishArray(arrayxxxXN, ref lenXN);//объединяем массив коэф. и исков с массивом скобок
+                arrayxxxXN = getPrewFinishArray(arrayxxxXN, ref lenXN); //объединяем массив коэф. и исков с массивом скобок
                 Invoke(new AddMessageDelegate(LogAdd), new object[] { "60" });
-                //getFinishArray(ref arrayxxxXN, ref lenXN); //результирующий массив
                 Invoke(new PrintRes(getFinishArray), new object[] {arrayxxxXN, lenXN});
+                Invoke(new AddMessageDelegate(ExcelentRes), new object[] { "Расчет завершен. Уравнение готво." });
             });
             thr.Priority = ThreadPriority.Highest;
             thr.Name = "Res mass forming";
@@ -78,6 +86,11 @@ namespace WindowsFormsApplication1
 
         public delegate void AddMessageDelegate(string message);
         public delegate void PrintRes(String[] array, int len);
+
+        public void ExcelentRes(string message)
+        {
+            toolStripLabel1.Text = message;
+        }
 
         public void LogAdd(string message)
         {
@@ -140,15 +153,19 @@ namespace WindowsFormsApplication1
             mass_skob[0].start = random.Next(0, lenXN - 3);
             mass_skob[0].end = random.Next(mass_skob[0].start + 1, lenXN - 1);
             skob_begin_end sbe;
-            Parallel.For(0,lenXN10,(i,state)=>{
-                while (true)
+            random = new Random();
+            for (int i = 1; i < lenXN10; i++)
+            {
+            restart:
+                sbe.start = random.Next(0, lenXN - 3);
+                sbe.end = random.Next(sbe.start + 1, lenXN - 1);
+                for (int j = 0; j < i - 1; j++)
                 {
-                    sbe.start = random.Next(0, lenXN - 3);
-                    sbe.end = random.Next(mass_skob[i].start + 1, lenXN - 1);
-                    break;
+                    if (mass_skob[j].start == sbe.start && mass_skob[j].end == sbe.end)
+                        goto restart;
                 }
                 mass_skob[i] = sbe;
-            });
+            }//);
             return mass_skob;
         }
 
@@ -179,7 +196,8 @@ namespace WindowsFormsApplication1
                     while (true)
                     {
                         int k1 = random.Next(X_min, X_max);
-                        Koef = k1.ToString();
+                        if (k1 != 0)
+                            Koef = k1.ToString();
                         if (k1 < 0)
                             skob = true;
                         break;
@@ -187,13 +205,16 @@ namespace WindowsFormsApplication1
                 else
                     while (true)
                     {
-                        int k2;
+                        int k1, k2;
                         do
                         {
                             k2 = random.Next(X_min, X_max);
                         } while (k2 == 0);
-
-                        int k1 = random.Next(Math.Abs(k2) * (-1) + 1, Math.Abs(k2) - 1);
+                        do
+                        {
+                            k1 = random.Next(Math.Abs(k2) * (-1) + 1, Math.Abs(k2) - 1);
+                        } while (k1 == 0);
+                        
                         if ((k1 <= 0 && k2 >= 0) || (k1 >= 0 && k2 <= 0))
                         {
                             skob = true;
@@ -212,7 +233,9 @@ namespace WindowsFormsApplication1
                 else
                     k_x = false; //будем делить
 
-                if (skob) //отрицательный коэф
+                if (Koef == "")
+                    arrayxxxXN[i] = X;
+                else if (!skob) //отрицательный коэф
                 {
                     if (k_x)
                         arrayxxxXN[i] = (Koef + "*" + X);
@@ -227,6 +250,15 @@ namespace WindowsFormsApplication1
                         arrayxxxXN[i] = ("(" + Koef + "/" + X + ")");
                 }
             });
+            
+            for (int i = 0; i < random.Next(1,lenXN / 2); i++)
+            {
+                int index = random.Next(0, lenXN - 1);
+                int r = random.Next(-3, 3);
+                if (r < 0)
+                    arrayxxxXN[index] += "^(" + r + ")";
+                else arrayxxxXN[index] += "^" + r;
+            }
             return arrayxxxXN;
         }
 
@@ -236,6 +268,7 @@ namespace WindowsFormsApplication1
                 thr.Abort();
             toolStripProgressBar1.Value = 0;
             ResulttextBox1.Clear();
+            toolStripLabel1.Text = "Расчет прерван";
         }
     }
 }
