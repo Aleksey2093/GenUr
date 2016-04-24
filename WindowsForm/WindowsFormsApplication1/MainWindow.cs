@@ -25,7 +25,7 @@ namespace WindowsFormsApplication1
         /// </summary>
         Random random;
 
-        private void getLenMinMaxValue(ref int lenXN, ref int min_X, ref int max_X)
+        private void getLenMinMaxValue(ref int lenXN, ref int min_X, ref int max_X, ref int count_cats, ref int count_catcount)
         {
             if (int.TryParse(minXtextBox3.Text, out min_X) == false)
             {
@@ -70,12 +70,35 @@ namespace WindowsFormsApplication1
                 coutXtextBox2.SelectAll();
                 return;
             }
+            if ((int.TryParse(textBox1_Cattegor.Text, out count_cats) == false) && count_cats >= 0)
+            {
+                MessageBox.Show("Введете пожалуйста в поле количества категорий целое положительное число", "", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                textBox1_Cattegor.Focus();
+                textBox1_Cattegor.SelectAll();
+                return; //выходим из текущего метода
+            }
+            if ((int.TryParse(textBox2_cat_cat_count.Text, out count_catcount) == false) && count_catcount >=0)
+            {
+                MessageBox.Show("Введете пожалуйста в поле среднее количество значений в категориях целое положительное число", "", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                textBox2_cat_cat_count.Focus();
+                textBox2_cat_cat_count.SelectAll();
+                return; //выходим из текущего метода
+            }
+            if (count_cats <= lenXN / 2)
+            {
+                MessageBox.Show("Введете пожалуйста в поле количества категорий целое положительное число, которое меньше половины от количества переменных ("+ (lenXN/2) +")", "", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                textBox1_Cattegor.Focus();
+                textBox1_Cattegor.SelectAll();
+                return; //выходим из текущего метода
+            }
         }
+
+        Thread thr;
 
         private void button1_Click(object sender, EventArgs e)
         {
-            int lenXN = -1, min_X = -1, max_X = -1; getLenMinMaxValue(ref lenXN, ref min_X, ref max_X);
-            if (lenXN <= 4 || min_X == -1 || max_X == -1)
+            int lenXN = -1, min_X = -1, max_X = -1, count_cats = -1, count_catcount = -1; getLenMinMaxValue(ref lenXN, ref min_X, ref max_X, ref count_cats, ref count_catcount);
+            if (lenXN <= 4 || min_X == -1 || max_X == -1 || count_cats == -1 || count_catcount == -1)
                 return;
             toolStripProgressBar1.Value = 0;
             richTextBox1.Clear();
@@ -87,6 +110,7 @@ namespace WindowsFormsApplication1
                 Invoke(new AddMessageDelegate(LogAdd), new object[] { "15" });
 
                 String[] arrayxxxXN = new String[lenXN]; //создаем массив иксов
+
                 Parallel.For(0, lenXN, (i, state) => { arrayxxxXN[i] = "X" + (1+i); }); //заполняем массив исков
                 
                 Invoke(new AddMessageDelegate(LogAdd), new object[] { "30" });
@@ -192,8 +216,6 @@ namespace WindowsFormsApplication1
             return arraystep;
         }
 
-        Thread thr;
-
         public delegate void AddMessageDelegate(string message);
         public delegate void PrintRes(string[] arrayxxxXN, float[] arrayxxxKoef, skob_begin_end[] arrayskob, stepen_koef_or_x[] arraystep, int lenXN);
 
@@ -260,7 +282,6 @@ namespace WindowsFormsApplication1
             public bool koef_or_x;
         };
 
-
         /// <summary>
         /// генератор массива коэффициентов и неизвестных переменных уравнения
         /// </summary>
@@ -321,7 +342,6 @@ namespace WindowsFormsApplication1
                 contextMenuStrip_Категории.Show(e.X,e.Y);
             }*/
         }
-
 
         private void treeView1_MouseUp(object sender, MouseEventArgs e)
         {
