@@ -12,7 +12,7 @@ namespace ConsoleApplication1
     class Program
     {
 
-        static String directoriya_to_file = @"C:\Users\aleks\Desktop\";
+        static String directoriya_to_file = "";//@"C:\Users\aleks\Desktop\";
 
         static void Main(string[] args)
         {
@@ -457,15 +457,15 @@ namespace ConsoleApplication1
 
             for (int i = 0; i < listX.Count;i++)
             {
-                int ij = 1;
-                for (int j = 0; j < listX[i].line2.Count; j++, ij++)
+                int ij = 1 + listX[i].line2.Count + listX[i].line3.Count;
+                /*for (int j = 0; j < listX[i].line2.Count; j++, ij++)
                 {
 
                 }
                 for (int j = 0; j < listX[i].line3.Count; j++, ij++)
                 {
 
-                }
+                }*/
                 if (maxlen < ij)
                     maxlen = ij;
             }
@@ -570,13 +570,39 @@ namespace ConsoleApplication1
         static void getXMLdesktop()
         {
             List<String> lineslist = new List<string>();
-            int cati = 0, maxcat = 5, lenXN = 111; Random r = new Random();
+            int cati = 0, catonemin = 3, catonemax = 5, maxcat = 5, lenXN = 111;
+            Random r = new Random(DateTime.Now.Day + DateTime.Now.Hour + DateTime.Now.Minute + DateTime.Now.Millisecond);
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine("Загрузка процесса создания XML файла");
+            Console.WriteLine("-------------------------------");
+        retcat1:
+            Console.WriteLine("Введите пожалуйста количество переменных + категорий одним числом");
+            if (!int.TryParse(Console.ReadLine(), out lenXN))
+                goto retcat1;
+            Console.WriteLine("-------------------------------");
+        retcat2:
+            Console.WriteLine("Введите пожалуйста максимальное количество категорий среди переменных");
+            if (!int.TryParse(Console.ReadLine(), out maxcat))
+                goto retcat2;
+            Console.WriteLine("-------------------------------");
+        retcat3:
+            Console.WriteLine("Введите пожалуйста минимально возможное количество значений в одной категории не менее двух");
+            if (!int.TryParse(Console.ReadLine(), out catonemin) || catonemin < 2)
+                goto retcat3;
+            Console.WriteLine("-------------------------------");
+        retcat4:
+            Console.WriteLine("Введите пожалуйста максимально возможное количество значений в одной категории не менее двух и не меньше предыдущего вводного значения");
+            if (!int.TryParse(Console.ReadLine(), out catonemax) || catonemin >= catonemax)
+                goto retcat4;
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine("Начался процесс создания файла");
+            Console.WriteLine("-------------------------------");
             lineslist.Add("<variables>");
             for (int i = 0; i < lenXN; i++)
             {
                 if (cati <= maxcat && r.Next(-40, 100) < -1)
                 {
-                    int n = r.Next(3, 5);
+                    int n = r.Next(catonemin, catonemax);
                     cati++;
                     lineslist.Add("	<category>");
                     lineslist.Add("		<name>X" + (i + 1) + "</name>");
@@ -597,7 +623,11 @@ namespace ConsoleApplication1
             {
                 lines[i] = lineslist[i];
             }
-            System.IO.File.WriteAllLines(directoriya_to_file + "WriteLines.xml", lines);
+            System.IO.File.WriteAllLines(directoriya_to_file + "XMLFile1.xml", lines);
+            Console.WriteLine("Файл создан и сохранен на диск. Информация по файлу: \n"
+            +"1. Количество переменных " + lenXN + "\n"
+            +"2. Количество числовых переменных " + (lenXN - 1 - cati) + "\n"
+            +"3. Количество категорий " + (cati-1) + "\n");
         }
 
         static void строковыйАнализФайла()
