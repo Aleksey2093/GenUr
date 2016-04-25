@@ -14,27 +14,31 @@ namespace ConsoleApplication1
             while (true)
             {
                 Console.Write("Введите команду от 0 до 3. 0 - выход\n");
+                int con = -99;
                 try
                 {
-                    int con = int.Parse(Console.In.ReadLine());
-                    if (con == 1)
-                    {
-                        getXMLdesktop();
-                    }
-                    else if (con == 2)
-                    {
-                        getListVar();
-                    }
-                    else if (con == 3)
-                    {
-                        getTestFile();
-                    }
-                    else if (con == 0)
-                    {
-                        goto exit;
-                    }
+                    con = int.Parse(Console.In.ReadLine());
                 }
-                catch { }
+                catch(Exception) 
+                {
+                    Console.WriteLine("Некорретный ввод.");
+                }
+                if (con == 1)
+                {
+                    getXMLdesktop();
+                }
+                else if (con == 2)
+                {
+                    getListVar();
+                }
+                else if (con == 3)
+                {
+                    getTestFile();
+                }
+                else if (con == 0)
+                {
+                    goto exit;
+                }
             }
         exit: ;
         }
@@ -134,31 +138,12 @@ namespace ConsoleApplication1
                 }
             }
 
-            double Y = X[1, 0] + X[2, 1] * X[66, 0]
-                + 0.1 * X[2, 4] * X[79, 0] * X[91, 0] 
-                + X[2, 2] * X[23, 0] + X[2, 1] * X[85, 0]
-                + X[3, 0] * 0.1 * X[20, 2] * X[90, 0]
-                + X[4, 2] * X[33, 0] + X[22, 0] * X[4, 3] + X[5, 0] + X[88, 0] 
-                + 0.1 * X[26, 0] * X[7, 0] * X[99, 0] 
-                + X[10, 3] * X[2, 4] + X[10, 2] * X[55, 0] + X[10, 3] * X[60, 0] + 0.5 * X[11, 0] * X[18, 0]
-                + X[12, 2] * X[14, 0] + X[13, 0] + X[37, 0] + X[15, 0] + X[16, 0] * X[102, 0]
-                + X[17, 2] * X[25, 0] + 0.3 * X[17, 1] * X[87, 0] + X[17, 3] * X[92, 0]
-                + 0.1 * X[20, 1] * X[41, 0] + X[20, 2] * X[103, 0] + 0.1 * X[20, 3] * X[56, 0]
-                + X[20, 1] * X[2, 1] + 0.1 * X[21, 0] * X[4, 2] + 0.5 * X[24, 0] * X[17, 4]
-                + X[28, 0] * X[30, 0] + X[29, 0] + 0.9 * X[31, 0] + X[32, 0] + X[80, 0] * X[20, 3]
-                + X[34, 0] * X[10, 4] * 0.4 + 0.4 * X[35, 0] * X[36, 0]
-                + 0.1 * X[40, 0] * X[96, 0] * X[43, 0]
-                + X[44, 0] * X[10, 3] + 0.3 * X[46, 0] * X[47, 0] + X[4, 2] * X[48, 0] * X[58, 0]
-                + 0.1 * X[50, 0] * X[39, 0] * X[93, 0] + X[94, 0] * X[52, 0] 
-                + X[53, 0] * X[45, 0] + X[54, 0] * X[51, 0] + X[27, 0] * X[20, 2]
-                + X[57, 0] * X[67, 0] + X[59, 0] * X[78, 0] + X[61, 0] * X[89, 0] + X[62, 0] * X[95, 0]
-                + X[63, 0] * X[100, 0] + X[8, 0] * X[105, 0] + X[9, 0] * X[2, 3]
-                + X[68, 0] * X[69, 0] + 0.1 * X[6, 0] * X[70, 0] * X[19, 0] 
-                + X[72, 0] * X[73, 0] + X[74, 0] * X[38, 0]
-                + X[76, 0] * X[49, 0] + 0.1 * X[77, 0] + X[81, 0] * X[75, 0] + X[12, 2] * X[65, 0]
-                + X[82, 0] * X[84, 0] + X[83, 0] + X[88, 0]
-                + X[89, 0] * X[71, 0] + X[97, 0] + X[42, 0] + X[98, 0]
-                + X[101, 0] * X[64, 0] + X[106, 0] * X[12, 3] + X[86, 0] * X[104, 0];
+            /*
+             * -------------------------
+             * в Y положить свою формулу
+             * -------------------------
+             */
+            double Y = 1;
             random = new Random(DateTime.Now.Millisecond);
             Console.WriteLine("!!!!!!!!!!!    Y = " + Y);
             double rrr;
@@ -393,6 +378,9 @@ namespace ConsoleApplication1
             public List<int> categor_ind; //массив для варианта
         };
 
+        /// <summary>
+        /// рандомная генерация файла описания
+        /// </summary>
         static void getXMLdesktop()
         {
             List<String> lineslist = new List<string>();
