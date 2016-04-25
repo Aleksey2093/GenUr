@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -54,7 +56,6 @@ namespace ConsoleApplication1
         private static void getTestFile()
         {
             //double Y = 0;
-            double[,] X = new double[107, 5];
             List<cattigor> qqcatigoriyas = new List<cattigor>();
             Random random = new Random();
 
@@ -65,7 +66,7 @@ namespace ConsoleApplication1
                 if (node.Name == "category")
                 {
                     int count = 0;
-                    cattigor item = new cattigor();                    
+                    cattigor item = new cattigor();
                     item.name = node.ChildNodes[0].InnerText;
                     item.value = new List<string>(1);
                     item.zn_value = new List<int>(1);
@@ -75,49 +76,127 @@ namespace ConsoleApplication1
                         item.zn_value.Add(-1);
                         count++;
                     }
-                    String tmp = item.name.Replace("X","");
+                    String tmp = item.name.Replace("X", "");
                     item.parse = int.Parse(tmp);
                     qqcatigoriyas.Add(item);
                 }
             }
+            int catразмермаксимальный = 0;
+            for (int i = 0; i < qqcatigoriyas.Count; i++)
+                if (catразмермаксимальный < qqcatigoriyas[i].zn_value.Count)
+                    catразмермаксимальный = qqcatigoriyas[i].zn_value.Count;
+            catразмермаксимальный += 1;
+            int nlist = 107;
+
             String line = null;
-            for (int i = 0; i < 100; i++)
+            int kolvotest = 300000, scet = 0;
+            //String[] lines = new String[kolvotest];
+            List<String> lines = new List<string>();
+            System.Globalization.CultureInfo cultureinfo = new System.Globalization.CultureInfo("en-US");
+
+            //FileStream file_lean_csv = File.Open(@"C:\Users\aleks\Desktop\lean.csv", System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.Write);
+            //System.IO.FileStream file_excel_lean = System.IO.File.OpenWrite(@"C:\Users\aleks\Desktop\lean.csv");
+
+            /*StreamWriter file_lean_csv = new StreamWriter("lean.csv");
+            StreamWriter file_excel_lean = new StreamWriter("lean_excel.csv");*/
+            
+            int st=0, en=kolvotest;
+            /*while(true)*/
             {
-                double Y = getTestFileNumberllll(new Random(i),ref X, ref qqcatigoriyas);
-                line = null; int kiti = 0;
-                for (int j=1;j<107;j++)
+                /*if (st+100000 < kolvotest-100)
                 {
-                    if (X[j, 1] != -1)
-                    {
-                        int index = -50;
-                        for (int k = 1; k < 5;k++)
-                            if (X[j,k] == 1)
-                            {
-                                index = k - 1;
-                                break;
-                            }
-                        int aaqew = (int)X[j,0];
-                        line += qqcatigoriyas[aaqew].value[index] + ","; kiti++;
-                    }
-                    else
-                    {
-                        line += X[j, 0] + ",";
-                    }
+                    en = st + 100000;
+                } 
+                else if (st < kolvotest)
+                {
+                    en = kolvotest;
                 }
-                line += Y.ToString(new System.Globalization.CultureInfo("en-US")) + "\n";
-                Console.WriteLine(line+"\n\n\n");
+                else
+                {
+                    break;
+                }*/
+                /*Parallel.For(st, en, (i, state) =>*/
+                /*Parallel.For(0, kolvotest, (i, state) =>*/
+                for (int i = 0; i < kolvotest; i++)
+                {
+                    double[,] X = new double[nlist, catразмермаксимальный];
+                    double Y = getTestFileNumberllll(i + 3, ref X, ref nlist, ref qqcatigoriyas);
+                    line = null; int kiti = 0;
+                    for (int j = 1; j < nlist; j++)
+                    {
+                        if (X[j, 1] != -1)
+                        {
+                            int index = -50;
+                            for (int k = 1; k < catразмермаксимальный; k++)
+                                if (X[j, k] == 1)
+                                {
+                                    index = k - 1;
+                                    break;
+                                }
+                            int aaqew = (int)X[j, 0];
+                            line += qqcatigoriyas[aaqew].value[index] + ","; kiti++;
+                        }
+                        else
+                        {
+                            line += Math.Round(X[j, 0], 2).ToString(cultureinfo) + ",";
+                        }
+                    }
+                    line += Math.Round(Y, 5).ToString(cultureinfo) + "";
+                    //Console.WriteLine(line+"\n\n\n");
+                    //lines[i] = line;
+                    lines.Add(line);
+                    /*if (lines.Count > 100000)
+                    {
+                        thrfile = new Thread(delegate()
+                        {
+                            for (int j = 0; j < lines.Count; j++)
+                            {
+                                file_lean_csv.WriteLine(lines[j] + "\n");
+                                lines.RemoveAt(j);
+                            }
+                        });
+                        thrfile.Start();
+                    }*/
+
+                    scet++;
+                    if (scet % 100000 == 0)
+                        Console.WriteLine("сейчас " + scet + ", осталось " + (kolvotest - scet) + ", всего " + kolvotest + ";");
+                }//);
+
+               /* for (int i = 0; i < kolvotest; )
+                {
+                    file_lean_csv.WriteLine(line);
+                    file_excel_lean.WriteLine(line.Replace(",", ";"));
+                }*/
+                System.IO.File.WriteAllLines(@"C:\Users\aleks\Desktop\lean.csv", lines, Encoding.UTF8);
+                Parallel.For(0, kolvotest, (i, state) =>
+                {
+                    lines[i] = lines[i].Replace(",", ";");
+                });
+                System.IO.File.WriteAllLines(@"C:\Users\aleks\Desktop\lean_excel.csv", lines, Encoding.UTF8);
+                st += 100000;
             }
         }
 
-        private static double getTestFileNumberllll(Random random, ref double[,] X, ref List<cattigor> qqcatigoriyas)
+
+
+        private static double getTestFileNumberllll(int rand, ref double[,] X, ref int nlist, ref List<cattigor> qqcatigoriyas)
         {
-            //Random random = new Random();
-            for (int i = 1; i < 107; i++)
-            {
-                X[i, 0] = random.Next(1, 30);
-                for (int j = 1; j < 5; j++)
-                    X[i, j] = -1;
-            } //отрандомли все включая категории, потом будем переделывать
+            int randf = rand;
+            if (randf > 100)
+                randf = 100;
+            Random random = new Random(rand);
+            int catразмермаксимальный = 0;
+            for (int i = 0; i < qqcatigoriyas.Count; i++)
+                if (catразмермаксимальный < qqcatigoriyas[i].zn_value.Count)
+                    catразмермаксимальный = qqcatigoriyas[i].zn_value.Count;
+            catразмермаксимальный+=1;
+            for (int i = 1; i < nlist; i++)
+                {
+                    X[i, 0] = random.Next(1, randf);
+                    for (int j = 1; j < catразмермаксимальный; j++)
+                        X[i, j] = -1;
+                } //отрандомли все включая категории, потом будем переделывать
             for (int i=0;i<qqcatigoriyas.Count;i++)
             {
                 int index = qqcatigoriyas[i].parse;
@@ -137,6 +216,18 @@ namespace ConsoleApplication1
                     }
                 }
             }
+            double rrr;
+            for (int i = 1; i < nlist; i++)
+            {
+                while (true)
+                {
+                    rrr = random.NextDouble();
+                    if (rrr <= 0.9)
+                        break;
+                }
+                X[i, 0] += rrr;
+            }
+
 
             /*
              * -------------------------
@@ -145,16 +236,15 @@ namespace ConsoleApplication1
              */
             double Y = 1;
             random = new Random(DateTime.Now.Millisecond);
-            Console.WriteLine("!!!!!!!!!!!    Y = " + Y);
-            double rrr;
+            //Console.WriteLine("!!!!!!!!!!!\t"+ rand +"\tY = " + Y);
             while (true)
             {
                 rrr = random.NextDouble();
-                if (rrr <= 0.455555)
+                if (rrr <= 0.9)
                     break;
             }
             Y += rrr;
-            Console.WriteLine(":::::::::::    Y = "+Y);
+            //Console.WriteLine(":::::::::::\t" + rand + "\tY = " + Y);
             return Y;
         }
 
