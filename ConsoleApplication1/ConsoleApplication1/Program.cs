@@ -41,6 +41,10 @@ namespace ConsoleApplication1
                 {
                     getTestFile();
                 }
+                else if (con == 4)
+                {
+                    строковыйАнализФайла();
+                }
                 else if (con == 0)
                 {
                     goto exit;
@@ -90,26 +94,78 @@ namespace ConsoleApplication1
                 if (catразмермаксимальный < qqcatigoriyas[i].zn_value.Count)
                     catразмермаксимальный = qqcatigoriyas[i].zn_value.Count;
             catразмермаксимальный += 1;
-            int nlist = 107;
+            String line = null; bool test_or_learn;
+            int nlist = 107, kolvotest = 300000, scet = 0;
 
-            String line = null;
-            int kolvotest = 300000, scet = 0;
-            //String[] lines = new String[kolvotest];
-            List<String> lines = new List<string>();
+            Console.WriteLine("-------------------------------");
+            {
+                Console.WriteLine("Введите количество переменных: ");
+            rколичествопеременных:
+                try
+                {
+                    nlist = int.Parse(Console.ReadLine());
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Неправельный ввод. Введите количество переменных еще раз:");
+                    goto rколичествопеременных;
+                }
+            }
+            Console.WriteLine("-------------------------------");
+            {
+                Console.WriteLine("Введите количество строчек вариаций: ");
+            rколичествопеременных:
+                try
+                {
+                    kolvotest = int.Parse(Console.ReadLine());
+                    if (kolvotest >= 600000)
+                        goto rколичествопеременных;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Неправельный ввод. Введите количество строк вариаций еще раз:");
+                    goto rколичествопеременных;
+                }
+            }
+            Console.WriteLine("-------------------------------");
+            {
+                Console.WriteLine("Добавить или не добавлять шум (true/false): ");
+            rколичествопеременных:
+                try
+                {
+                    test_or_learn = Boolean.Parse(Console.ReadLine());
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Неправельный ввод. Введите количество строк вариаций еще раз:");
+                    goto rколичествопеременных;
+                }
+            }
+
             System.Globalization.CultureInfo cultureinfo = new System.Globalization.CultureInfo("en-US");
 
-            //FileStream file_lean_csv = File.Open(@"C:\Users\aleks\Desktop\lean.csv", System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.Write);
-            //System.IO.FileStream file_excel_lean = System.IO.File.OpenWrite(@"C:\Users\aleks\Desktop\lean.csv");
+            StreamWriter file_lean_csv = null;
+            StreamWriter file_excel_lean = null;
+            StreamWriter file_test_csv = null;
+            StreamWriter file_excel_test = null;
 
-            /*StreamWriter file_lean_csv = new StreamWriter("lean.csv");
-            StreamWriter file_excel_lean = new StreamWriter("lean_excel.csv");*/
-            
-            int st=0, en=kolvotest;
-            /*while(true)*/
+            if (test_or_learn)
             {
-                /*if (st+100000 < kolvotest-100)
+                file_lean_csv = new StreamWriter("lean.csv");
+                file_excel_lean = new StreamWriter("lean_excel.csv");
+            }
+            else
+            {
+                file_test_csv = new StreamWriter("test.csv");
+                file_excel_test = new StreamWriter("test_excel.csv");
+            }
+
+            int st = 0, en = kolvotest;
+            //while(true)
+            {
+                /*if (st+300000 < kolvotest-100)
                 {
-                    en = st + 100000;
+                    en = st + 300000;
                 } 
                 else if (st < kolvotest)
                 {
@@ -119,12 +175,12 @@ namespace ConsoleApplication1
                 {
                     break;
                 }*/
+                String[] lines = new String[en - st];
                 /*Parallel.For(st, en, (i, state) =>*/
-                /*Parallel.For(0, kolvotest, (i, state) =>*/
-                for (int i = 0; i < kolvotest; i++)
+                for (int i = st; i < en; i++)
                 {
                     double[,] X = new double[nlist, catразмермаксимальный];
-                    double Y = getTestFileNumberllll(i + 3, ref X, ref nlist, ref qqcatigoriyas);
+                    double Y = getTestFileNumberllll(i + 3, ref X, ref nlist, ref qqcatigoriyas, ref test_or_learn, ref catразмермаксимальный);
                     line = null; int kiti = 0;
                     for (int j = 1; j < nlist; j++)
                     {
@@ -146,67 +202,92 @@ namespace ConsoleApplication1
                         }
                     }
                     line += Math.Round(Y, 5).ToString(cultureinfo) + "";
-                    //Console.WriteLine(line+"\n\n\n");
-                    //lines[i] = line;
-                    lines.Add(line);
-                    /*if (lines.Count > 100000)
+                    lines[i - st] = line;
+                    if (line == null || lines[i - st] == null)
                     {
-                        thrfile = new Thread(delegate()
-                        {
-                            for (int j = 0; j < lines.Count; j++)
-                            {
-                                file_lean_csv.WriteLine(lines[j] + "\n");
-                                lines.RemoveAt(j);
-                            }
-                        });
-                        thrfile.Start();
-                    }*/
 
+                    }
                     scet++;
                     if (scet % 100000 == 0)
                         Console.WriteLine("сейчас " + scet + ", осталось " + (kolvotest - scet) + ", всего " + kolvotest + ";");
                 }//);
 
-               /* for (int i = 0; i < kolvotest; )
-                {
-                    file_lean_csv.WriteLine(line);
-                    file_excel_lean.WriteLine(line.Replace(",", ";"));
-                }*/
-                System.IO.File.WriteAllLines(directoriya_to_file+"lean.csv", lines, Encoding.UTF8);
+                String tmpp;// = lines[i].Replace(",", ";");
+                if (test_or_learn)
+                    for (int i = 0; i < lines.Length; i++)
+                    {
+                        tmpp = lines[i];
+                        //if (tmpp != null)
+                        {
+                            file_lean_csv.WriteLine(tmpp);
+                            tmpp = lines[i].Replace(",", ";");
+                            file_excel_lean.WriteLine(tmpp);
+                        }
+                    }
+                else
+                    for (int i = 0; i < lines.Length; i++)
+                    {
+                        tmpp = lines[i];
+                        //if (tmpp != null)
+                        {
+                            file_test_csv.WriteLine(tmpp);
+                            tmpp = lines[i].Replace(",", ";");
+                            file_excel_test.WriteLine(tmpp);
+                        }
+                    }
+                /*String filenamest;
+                if (!test_or_learn)
+                    filenamest = "test";
+                else
+                    filenamest = "learn";
+                System.IO.File.WriteAllLines(directoriya_to_file + filenamest +".csv", lines, Encoding.UTF8);
                 Parallel.For(0, kolvotest, (i, state) =>
                 {
-                    lines[i] = lines[i].Replace(",", ";");
+                    String tmp = lines[i].Replace(",", ";");
+                    lines[i] = tmp;
                 });
-                System.IO.File.WriteAllLines(directoriya_to_file+"lean_excel.csv", lines, Encoding.UTF8);
-                st += 100000;
+                System.IO.File.WriteAllLines(directoriya_to_file + filenamest +"_excel.csv", lines, Encoding.UTF8);*/
+                st += 300000;
+            }
+        exit: ;
+            if (test_or_learn)
+            {
+                file_excel_lean.Close();
+                file_lean_csv.Close();
+            }
+            else
+            {
+                file_excel_test.Close();
+                file_test_csv.Close();
             }
         }
 
 
 
-        private static double getTestFileNumberllll(int rand, ref double[,] X, ref int nlist, ref List<cattigor> qqcatigoriyas)
+        private static double getTestFileNumberllll(int rand, ref double[,] X, ref int nlist, ref List<cattigor> qqcatigoriyas, ref bool test_or_learn, ref int catразмермаксимальный)
         {
             int randf = rand;
             if (randf > 100)
                 randf = 100;
-            Random random = new Random(rand);
-            int catразмермаксимальный = 0;
+            int dateee = DateTime.Now.Year+DateTime.Now.Month+DateTime.Now.Day+DateTime.Now.Hour+DateTime.Now.Minute+DateTime.Now.Millisecond;
+            Random random = new Random(rand+dateee);
+            /*int catразмермаксимальный = 0;
             for (int i = 0; i < qqcatigoriyas.Count; i++)
                 if (catразмермаксимальный < qqcatigoriyas[i].zn_value.Count)
                     catразмермаксимальный = qqcatigoriyas[i].zn_value.Count;
-            catразмермаксимальный+=1;
+            catразмермаксимальный += 1;*/
             for (int i = 1; i < nlist; i++)
-                {
-                    X[i, 0] = random.Next(1, randf);
-                    for (int j = 1; j < catразмермаксимальный; j++)
-                        X[i, j] = -1;
-                } //отрандомли все включая категории, потом будем переделывать
-            for (int i=0;i<qqcatigoriyas.Count;i++)
+            {
+                X[i, 0] = random.Next(1, randf);
+                for (int j = 1; j < catразмермаксимальный; j++)
+                    X[i, j] = -1;
+            } //отрандомли все включая категории, потом будем переделывать
+            for (int i = 0; i < qqcatigoriyas.Count; i++)
             {
                 int index = qqcatigoriyas[i].parse;
                 int what = random.Next(0, qqcatigoriyas[i].zn_value.Count);
                 X[index, 0] = i;
-                for (int j=0;j<qqcatigoriyas[i].zn_value.Count;j++)
+                for (int j = 0; j < qqcatigoriyas[i].zn_value.Count; j++)
                 {
                     if (what == j)
                     {
@@ -220,17 +301,18 @@ namespace ConsoleApplication1
                     }
                 }
             }
-            double rrr;
-            for (int i = 1; i < nlist; i++)
-            {
-                while (true)
+            double rrr = 0;
+            if (test_or_learn)
+                for (int i = 1; i < nlist; i++)
                 {
-                    rrr = random.NextDouble();
-                    if (rrr <= 0.9)
-                        break;
+                    while (true)
+                    {
+                        rrr = random.NextDouble();
+                        if (rrr <= 0.9)
+                            break;
+                    }
+                    X[i, 0] += rrr;
                 }
-                X[i, 0] += rrr;
-            }
 
 
             /* -------------------------
@@ -245,17 +327,20 @@ namespace ConsoleApplication1
              * -------------------------
              * -------------------------
              */
-            double Y = 1
+            double Y = 1;
             random = new Random(DateTime.Now.Millisecond);
             //Console.WriteLine("!!!!!!!!!!!\t"+ rand +"\tY = " + Y);
-            while (true)
+            if (test_or_learn)
             {
-                rrr = random.NextDouble();
-                if (rrr <= 0.9)
-                    break;
+                while (true)
+                {
+                    rrr = random.NextDouble();
+                    if (rrr <= 0.9)
+                        break;
+                }
+                Y += rrr;
+                //Console.WriteLine(":::::::::::\t" + rand + "\tY = " + Y);
             }
-            Y += rrr;
-            //Console.WriteLine(":::::::::::\t" + rand + "\tY = " + Y);
             return Y;
         }
 
@@ -513,6 +598,41 @@ namespace ConsoleApplication1
                 lines[i] = lineslist[i];
             }
             System.IO.File.WriteAllLines(directoriya_to_file + "WriteLines.xml", lines);
+        }
+
+        static void строковыйАнализФайла()
+        {
+            String filename = "";
+            Console.WriteLine("Введите имя файла без расширения");
+            filename = Console.ReadLine();
+            filename += ".csv";
+            //StreamReader file_lean_csv = new StreamReader();
+            string[] str = System.IO.File.ReadAllLines(filename, Encoding.UTF8);
+            int max = 0;
+            for (int i=0;i<str[0].Length;i++)
+            {
+                
+                if (str[0][i] == (';') || str[0][i] == (','))
+                {
+                    max++;
+                }
+            }
+
+            for (int i = 0; i < str.Length; i++)
+            {
+                int kavcout = 0;
+                for (int j = 0; j < str[i].Length; j++)
+                {
+                    if (str[i][j] == (';') || str[i][j] == (','))
+                    {
+                        kavcout++;
+                    }
+                }
+                if (kavcout != max)
+                {
+                    Console.WriteLine("Строка " + (i+1) + " kavcout " + kavcout + " max " + max);
+                }
+            }
         }
     }
 }
