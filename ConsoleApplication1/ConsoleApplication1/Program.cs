@@ -391,7 +391,8 @@ namespace ConsoleApplication1
                 var b = listX[i].c_bool_1;
                 var tlist = listX[i].line1;
                 Random random = new Random(i);
-                for (int j = 0; j < listX.Count; j++)
+                //for (int j = 0; j < listX.Count; j++)
+                Parallel.For(0, listX.Count, (j, state) =>
                 {
                     var tmpc = listX[j].categor_1;
                     var tmpb = listX[j].c_bool_1;
@@ -407,7 +408,7 @@ namespace ConsoleApplication1
                         listX[j].line2.Add(lxvar);
                         line += tmptlist + "*" + tlist + "\t";
                     }
-                }
+                });
                 line += "\n";
             }
             System.IO.File.WriteAllText(directoriya_to_file+"line2.txt", line, Encoding.UTF8);
@@ -538,9 +539,11 @@ namespace ConsoleApplication1
                     int rannn = r.Next(0, maxii);
                     tmp = mat[i, rannn];
                 }
+                if (r.Next(-10, 100) < 0)
+                    tmp = (r.Next(1, 3) + Math.Round(r.NextDouble(),1)).ToString() + "*" + tmp;
                 line += tmp + " + ";
             }
-            System.IO.File.WriteAllText(directoriya_to_file + "line_all_res.txt", line, Encoding.UTF8);
+            System.IO.File.WriteAllText(directoriya_to_file + "line_all_res.txt", line.Remove(line.Length-3), Encoding.UTF8);
         }
 
         /// <summary>
