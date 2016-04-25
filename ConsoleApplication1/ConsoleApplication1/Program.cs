@@ -11,11 +11,15 @@ namespace ConsoleApplication1
 {
     class Program
     {
+
+        static String directoriya_to_file = @"C:\Users\aleks\Desktop\";
+
         static void Main(string[] args)
         {
             while (true)
             {
-                Console.Write("Введите команду от 0 до 3. 0 - выход\n");
+                Console.Write("1-собрать XML файл, 2-сгенерировать файлы случайных комбинаций, 3 - сгенерировать тесты или данные для обучения." 
+                + " Перед запуском проверить код на корректность выставленных значений. Введите команду от 0 до 3. 0 - выход\n");
                 int con = -99;
                 try
                 {
@@ -168,12 +172,12 @@ namespace ConsoleApplication1
                     file_lean_csv.WriteLine(line);
                     file_excel_lean.WriteLine(line.Replace(",", ";"));
                 }*/
-                System.IO.File.WriteAllLines(@"C:\Users\aleks\Desktop\lean.csv", lines, Encoding.UTF8);
+                System.IO.File.WriteAllLines(directoriya_to_file+"lean.csv", lines, Encoding.UTF8);
                 Parallel.For(0, kolvotest, (i, state) =>
                 {
                     lines[i] = lines[i].Replace(",", ";");
                 });
-                System.IO.File.WriteAllLines(@"C:\Users\aleks\Desktop\lean_excel.csv", lines, Encoding.UTF8);
+                System.IO.File.WriteAllLines(directoriya_to_file+"lean_excel.csv", lines, Encoding.UTF8);
                 st += 100000;
             }
         }
@@ -229,12 +233,19 @@ namespace ConsoleApplication1
             }
 
 
-            /*
+            /* -------------------------
+             * -------------------------
+             * -------------------------
+             * -------------------------
              * -------------------------
              * в Y положить свою формулу
              * -------------------------
+             * -------------------------
+             * -------------------------
+             * -------------------------
+             * -------------------------
              */
-            double Y = 1;
+            double Y = 1
             random = new Random(DateTime.Now.Millisecond);
             //Console.WriteLine("!!!!!!!!!!!\t"+ rand +"\tY = " + Y);
             while (true)
@@ -285,7 +296,7 @@ namespace ConsoleApplication1
                 }
             }
             //на этом этапе у нас есть первая линия значений отправляем ее в файл
-            System.IO.File.WriteAllText(@"C:\Users\aleks\Desktop\line1.txt", line, Encoding.UTF8);
+            System.IO.File.WriteAllText(directoriya_to_file+"line1.txt", line, Encoding.UTF8);
 
             line = null;
             //делаем вторую степень возможно сразу и третью по глубине массива будет видно
@@ -314,7 +325,7 @@ namespace ConsoleApplication1
                 }
                 line += "\n";
             }
-            System.IO.File.WriteAllText(@"C:\Users\aleks\Desktop\line2.txt", line, Encoding.UTF8);
+            System.IO.File.WriteAllText(directoriya_to_file+"line2.txt", line, Encoding.UTF8);
             //сделана и распечатана вторая степень
 
             line = null;
@@ -354,7 +365,7 @@ namespace ConsoleApplication1
                 }
                 line += "\n";
             }
-            System.IO.File.WriteAllText(@"C:\Users\aleks\Desktop\line3.txt", line, Encoding.UTF8);
+            System.IO.File.WriteAllText(directoriya_to_file + "line3.txt", line, Encoding.UTF8);
             line = null;
             // = new String[listX[0].line3.Count+listX[0].line2.Count+1];
             List<String> listlines = new List<string>(); int maxlen = 0; //bool fir = false;
@@ -425,7 +436,7 @@ namespace ConsoleApplication1
                     mat[i, ij] = null;
                 }
             }
-            System.IO.File.WriteAllLines(@"C:\Users\aleks\Desktop\line_all.csv", listlines, Encoding.UTF8);
+            System.IO.File.WriteAllLines(directoriya_to_file + "line_all.csv", listlines, Encoding.UTF8);
             line = null;
             for (int i = 0; i < listX.Count-1; i++)
             {
@@ -444,7 +455,7 @@ namespace ConsoleApplication1
                 }
                 line += tmp + " + ";
             }
-            System.IO.File.WriteAllText(@"C:\Users\aleks\Desktop\line_all_res.txt", line, Encoding.UTF8);
+            System.IO.File.WriteAllText(directoriya_to_file + "line_all_res.txt", line, Encoding.UTF8);
         }
 
         /// <summary>
@@ -501,7 +512,7 @@ namespace ConsoleApplication1
             {
                 lines[i] = lineslist[i];
             }
-            System.IO.File.WriteAllLines(@"C:\Users\aleks\Desktop\WriteLines.xml", lines);
+            System.IO.File.WriteAllLines(directoriya_to_file + "WriteLines.xml", lines);
         }
     }
 }
