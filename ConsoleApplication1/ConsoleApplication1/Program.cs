@@ -104,6 +104,7 @@ namespace ConsoleApplication1
                 try
                 {
                     nlist = int.Parse(Console.ReadLine());
+                    nlist++;
                 }
                 catch (Exception)
                 {
