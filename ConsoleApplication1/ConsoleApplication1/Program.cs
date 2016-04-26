@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -152,8 +152,8 @@ namespace ConsoleApplication1
 
             if (test_or_learn)
             {
-                file_lean_csv = new StreamWriter("lean.csv");
-                file_excel_lean = new StreamWriter("lean_excel.csv");
+                file_lean_csv = new StreamWriter("learn.csv");
+                file_excel_lean = new StreamWriter("learn_excel.csv");
             }
             else
             {
@@ -302,18 +302,6 @@ namespace ConsoleApplication1
                     }
                 }
             }
-            double rrr = 0;
-            if (test_or_learn)
-                for (int i = 1; i < nlist; i++)
-                {
-                    while (true)
-                    {
-                        rrr = random.NextDouble();
-                        //if (rrr <= 0.9)
-                            break;
-                    }
-                    X[i, 0] += rrr;
-                }
 
 
             /* -------------------------
@@ -331,6 +319,19 @@ namespace ConsoleApplication1
             double Y = X[1, 0];
             random = new Random(DateTime.Now.Millisecond);
             //Console.WriteLine("!!!!!!!!!!!\t"+ rand +"\tY = " + Y);
+            double rrr = 0;
+            if (test_or_learn)
+                for (int i = 1; i < nlist; i++)
+                {
+                    while (true)
+                    {
+                        rrr = random.NextDouble();
+                        //if (rrr <= 0.9)
+                        break;
+                    }
+                    if (X[i, 1] == -1)
+                        X[i, 0] += rrr;
+                }
             if (test_or_learn)
             {
                 while (true)
