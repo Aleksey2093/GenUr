@@ -180,7 +180,7 @@ namespace ConsoleApplication1
                 for (int i = st; i < en; i++)
                 {
                     double[,] X = new double[nlist, catразмермаксимальный];
-                    double Y = getTestFileNumberllll(i + 3, ref X, ref nlist, ref qqcatigoriyas, ref test_or_learn, ref catразмермаксимальный);
+                    double Y = getTestFileNumberllll(i + 10, ref X, ref nlist, ref qqcatigoriyas, ref test_or_learn, ref catразмермаксимальный);
                     line = null; int kiti = 0;
                     for (int j = 1; j < nlist; j++)
                     {
@@ -308,7 +308,7 @@ namespace ConsoleApplication1
                     while (true)
                     {
                         rrr = random.NextDouble();
-                        if (rrr <= 0.9)
+                        //if (rrr <= 0.9)
                             break;
                     }
                     X[i, 0] += rrr;
@@ -327,15 +327,16 @@ namespace ConsoleApplication1
              * -------------------------
              * -------------------------
              */
-            double Y = 1;
+            double Y = X[1, 0];
             random = new Random(DateTime.Now.Millisecond);
             //Console.WriteLine("!!!!!!!!!!!\t"+ rand +"\tY = " + Y);
             if (test_or_learn)
             {
                 while (true)
                 {
-                    rrr = random.NextDouble();
-                    if (rrr <= 0.9)
+                    rrr = random.Next(0, 1);
+                    rrr += random.NextDouble();
+                    //if (rrr <= 0.9)
                         break;
                 }
                 Y += rrr;
@@ -352,7 +353,38 @@ namespace ConsoleApplication1
             String line = "";
             List<XlistiXXX> listX = new List<XlistiXXX>();
             XmlDocument doc = new XmlDocument();
-            doc.Load("XMLFile1.xml");
+
+            String[] filenames = System.IO.Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory,"*.xml");
+            int file_index = -1;
+            Console.WriteLine("---------------------");
+            reti:
+            Console.WriteLine("Выберите файл введя его номер из списка:");
+            for (int i = 0; i < filenames.Length-1; i++)
+                Console.WriteLine((i+1)+": " + filenames[i] + ";");
+            Console.WriteLine(filenames.Length + ": " + filenames[filenames.Length-1] + ".");
+            String str = Console.ReadLine();
+            if (int.TryParse(str, out file_index))
+            {
+                file_index--;
+                if (file_index > 0 && file_index < filenames.Length)
+                {
+                    Console.WriteLine("Введенное число не соответствует ни одному номеру из списка. Повторите выбор, если вы забили сгенировать файл, то введите '-exit', чтобы вернуться в основное меню");
+                    goto reti;
+                }
+            }
+            else if (Object.Equals(str,"-exit") || Object.Equals(str,"-выход"))
+            {
+                Console.WriteLine("Возврат в главное меню");
+                return;
+            }
+            else
+            {
+                Console.WriteLine("Вы ввели совершенно что-то непонятное");
+                goto reti;
+            }
+            Console.WriteLine("---------------------");
+            Console.WriteLine("Файл - " + filenames[file_index] + ". Запущена обработка первой линии.");
+            doc.Load(filenames[file_index]);
             int ind = 1;
             foreach (XmlNode node in doc.DocumentElement)
             {
@@ -361,7 +393,7 @@ namespace ConsoleApplication1
                 lx.line3 = new List<ListingXVars>();
                 if (node.Name == "number")
                 {
-                    lx.line1 = node.InnerText + "";
+                    lx.line1 = "X[" + node.InnerText.Remove(0,1) + ",0]";
                     lx.categor_1 = ind; ind++;
                     lx.c_bool_1 = false;
                     listX.Add(lx);
@@ -369,9 +401,9 @@ namespace ConsoleApplication1
                 }
                 else if (node.Name == "category")
                 {
-                    for (int i = 1; i < node.ChildNodes.Count; i++)
+                    for (int i = 1; i < node.ChildNodes.Count-1; i++)
                     {
-                        lx.line1 = node["name"].InnerText + "_" + i + "";
+                        lx.line1 = "X[" + node["name"].InnerText.Remove(0,1) + "," + i + "]";
                         lx.categor_1 = ind;
                         lx.c_bool_1 = true;
                         listX.Add(lx);
@@ -380,11 +412,11 @@ namespace ConsoleApplication1
                     ind++;
                 }
             }
-            //на этом этапе у нас есть первая линия значений отправляем ее в файл
+            Console.WriteLine("Первая линия сгенерирована и сохранена в файле line1.txt");
             System.IO.File.WriteAllText(directoriya_to_file+"line1.txt", line, Encoding.UTF8);
 
             line = null;
-            //делаем вторую степень возможно сразу и третью по глубине массива будет видно
+            Console.WriteLine("Запущен процесс создания второй линии.");
             for (int i = 0; i < listX.Count; i++)
             {
                 var c = listX[i].categor_1;
@@ -412,10 +444,10 @@ namespace ConsoleApplication1
                 line += "\n";
             }
             System.IO.File.WriteAllText(directoriya_to_file+"line2.txt", line, Encoding.UTF8);
-            //сделана и распечатана вторая степень
+            Console.WriteLine("Окончен процесс создания второй линии line2.txt.");
 
             line = null;
-            //приступаем к третьей степени
+            Console.WriteLine("Запущен процесс создания третьей линии.");
             for (int i = 0; i < listX.Count; i++)
             {
                 for (int j = 0; j < listX[i].line2.Count; j++)
@@ -453,20 +485,12 @@ namespace ConsoleApplication1
             }
             System.IO.File.WriteAllText(directoriya_to_file + "line3.txt", line, Encoding.UTF8);
             line = null;
-            // = new String[listX[0].line3.Count+listX[0].line2.Count+1];
+            Console.WriteLine("Окончен процесс создания третьей линии line3.txt.");
             List<String> listlines = new List<string>(); int maxlen = 0; //bool fir = false;
 
             for (int i = 0; i < listX.Count;i++)
             {
                 int ij = 1 + listX[i].line2.Count + listX[i].line3.Count;
-                /*for (int j = 0; j < listX[i].line2.Count; j++, ij++)
-                {
-
-                }
-                for (int j = 0; j < listX[i].line3.Count; j++, ij++)
-                {
-
-                }*/
                 if (maxlen < ij)
                     maxlen = ij;
             }
@@ -523,11 +547,12 @@ namespace ConsoleApplication1
                 }
             }
             System.IO.File.WriteAllLines(directoriya_to_file + "line_all.csv", listlines, Encoding.UTF8);
+            Console.WriteLine("Окончен процесс создания общей линии line_all.csv.");
             line = null;
             for (int i = 0; i < listX.Count-1; i++)
             {
                 String tmp = null;
-                Random r = new Random(i);
+                Random r = new Random(i+DateTime.Now.Millisecond);
                 int maxii = 0;
                 for (int j = 0; j < maxlen; j++, maxii++)
                 {
@@ -539,11 +564,19 @@ namespace ConsoleApplication1
                     int rannn = r.Next(0, maxii);
                     tmp = mat[i, rannn];
                 }
-                if (r.Next(-10, 100) < 0)
-                    tmp = (r.Next(1, 3) + Math.Round(r.NextDouble(),1)).ToString() + "*" + tmp;
+                if (r.Next(-100, 100) < 0)
+                {
+                    if (r.Next(-30, 100) < 0)
+                        tmp = (Math.Round(r.NextDouble(),2)).ToString().Remove(0, 1) + "*" + tmp;
+                    else 
+                        tmp = "*" + tmp;
+                    tmp = (r.Next(1, 3)).ToString() + tmp;
+                }
                 line += tmp + " + ";
             }
             System.IO.File.WriteAllText(directoriya_to_file + "line_all_res.txt", line.Remove(line.Length-3), Encoding.UTF8);
+            Console.WriteLine("Окончен процесс создания уравнения line_all_res.txt.");
+            Console.WriteLine("-----------------");
         }
 
         /// <summary>
