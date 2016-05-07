@@ -162,22 +162,11 @@ namespace ConsoleApplication1
             }
 
             int st = 0, en = kolvotest;
-            //while(true)
+
             {
-                /*if (st+300000 < kolvotest-100)
-                {
-                    en = st + 300000;
-                } 
-                else if (st < kolvotest)
-                {
-                    en = kolvotest;
-                }
-                else
-                {
-                    break;
-                }*/
+
                 String[] lines = new String[en - st];
-                /*Parallel.For(st, en, (i, state) =>*/
+
                 for (int i = st; i < en; i++)
                 {
                     double[,] X = new double[nlist, catразмермаксимальный];
@@ -211,14 +200,13 @@ namespace ConsoleApplication1
                     scet++;
                     if (scet % 100000 == 0)
                         Console.WriteLine("сейчас " + scet + ", осталось " + (kolvotest - scet) + ", всего " + kolvotest + ";");
-                }//);
+                }
 
-                String tmpp;// = lines[i].Replace(",", ";");
+                String tmpp;
                 if (test_or_learn)
                     for (int i = 0; i < lines.Length; i++)
                     {
                         tmpp = lines[i];
-                        //if (tmpp != null)
                         {
                             file_lean_csv.WriteLine(tmpp);
                             tmpp = lines[i].Replace(",", ";");
@@ -229,25 +217,12 @@ namespace ConsoleApplication1
                     for (int i = 0; i < lines.Length; i++)
                     {
                         tmpp = lines[i];
-                        //if (tmpp != null)
                         {
                             file_test_csv.WriteLine(tmpp);
                             tmpp = lines[i].Replace(",", ";");
                             file_excel_test.WriteLine(tmpp);
                         }
                     }
-                /*String filenamest;
-                if (!test_or_learn)
-                    filenamest = "test";
-                else
-                    filenamest = "learn";
-                System.IO.File.WriteAllLines(directoriya_to_file + filenamest +".csv", lines, Encoding.UTF8);
-                Parallel.For(0, kolvotest, (i, state) =>
-                {
-                    String tmp = lines[i].Replace(",", ";");
-                    lines[i] = tmp;
-                });
-                System.IO.File.WriteAllLines(directoriya_to_file + filenamest +"_excel.csv", lines, Encoding.UTF8);*/
                 st += 300000;
             }
         exit: ;
@@ -272,11 +247,6 @@ namespace ConsoleApplication1
                 randf = 100;
             int dateee = DateTime.Now.Year+DateTime.Now.Month+DateTime.Now.Day+DateTime.Now.Hour+DateTime.Now.Minute+DateTime.Now.Millisecond;
             Random random = new Random(rand+dateee);
-            /*int catразмермаксимальный = 0;
-            for (int i = 0; i < qqcatigoriyas.Count; i++)
-                if (catразмермаксимальный < qqcatigoriyas[i].zn_value.Count)
-                    catразмермаксимальный = qqcatigoriyas[i].zn_value.Count;
-            catразмермаксимальный += 1;*/
             for (int i = 1; i < nlist; i++)
             {
                 X[i, 0] = random.Next(1, randf);
@@ -316,7 +286,7 @@ namespace ConsoleApplication1
              * -------------------------
              * -------------------------
              */
-            double Y = X[1, 0];
+            double Y = 0;
             random = new Random(DateTime.Now.Millisecond);
             //Console.WriteLine("!!!!!!!!!!!\t"+ rand +"\tY = " + Y);
             double rrr = 0;
