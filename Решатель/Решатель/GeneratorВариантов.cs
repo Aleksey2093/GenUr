@@ -248,10 +248,7 @@ namespace Решатель
         private int getFactorial(int dlinna)
         {
             int res = 0;
-            for (int i=0;i<dlinna;i++)
-            {
-                res += i;
-            }
+            Parallel.For(1, dlinna + 1, (i, state) => { res += i; });
             return res;
         }
 
