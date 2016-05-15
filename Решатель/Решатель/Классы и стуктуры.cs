@@ -8,7 +8,7 @@ namespace Решатель
 {
     public class Uravnenie
     {
-        List<Kombinacia> list;
+        public List<Kombinacia> list;
     }
     public class Kombinacia
     {
