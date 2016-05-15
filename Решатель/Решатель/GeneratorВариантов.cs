@@ -16,7 +16,7 @@ namespace Решатель
                 Kombinacia item = new Kombinacia();
                 if (per.Kategor)
                 {
-                    for (int i = 0; i < per.ValueКатегория.Count; i++)
+                    for (int i = 0; i < per.ValueКатегория.Count-1; i++)
                     {
                         item = new Kombinacia();
                         item.stepengen = 1;
@@ -54,14 +54,14 @@ namespace Решатель
                 var per = listPeremen[index];
                 if (per.Kategor)
                 {
-                    for (int i = 0; i < per.ValueКатегория.Count; i++)
+                    for (int i = 0; i < per.ValueКатегория.Count-1; i++)
                     {
                         for (int index2 = index; index2 < listPeremen.Count; index2++)
                         {
                             var per2 = listPeremen[index2];
                             if (per2.Kategor == true && per.Name != per2.Name)
                             {
-                                for (int j = 0; j < per.ValueКатегория.Count; j++)
+                                for (int j = 0; j < per.ValueКатегория.Count-1; j++)
                                 {
                                     twoСтепень.Add(addВтороеЧисло(per, i + 1, per2, j + 1));
                                 }
@@ -80,7 +80,7 @@ namespace Решатель
                         var per2 = listPeremen[index2];
                         if (per2.Kategor == true && per.Name != per2.Name)
                         {
-                            for (int j = 0; j < per.ValueКатегория.Count; j++)
+                            for (int j = 0; j < per2.ValueКатегория.Count-1; j++)
                             {
                                 twoСтепень.Add(addВтороеЧисло(per, -1, per2, j + 1));
                             }
@@ -104,7 +104,7 @@ namespace Решатель
                 var per3 = listPemen[index3];
                 if (per3.Kategor && per3.Name != per.Name && per3.Name != per2.Name)
                 {
-                    for (int k = 0; k < per3.ValueКатегория.Count; k++)
+                    for (int k = 0; k < per3.ValueКатегория.Count-1; k++)
                     {
                         Kombinacia item = new Kombinacia();
                         item.onePer = per;
@@ -141,14 +141,14 @@ namespace Решатель
                 var per = listPeremen[index];
                 if (per.Kategor)
                 {
-                    for (int i = 0; i < per.ValueКатегория.Count; i++)
+                    for (int i = 0; i < per.ValueКатегория.Count-1; i++)
                     {
                         for (int index2 = index; index2 < listPeremen.Count; index2++)
                         {
                             var per2 = listPeremen[index2];
                             if (per2.Kategor == true && per.Name != per2.Name)
                             {
-                                for (int j = 0; j < per.ValueКатегория.Count; j++)
+                                for (int j = 0; j < per.ValueКатегория.Count-1; j++)
                                 {
                                     threeСтепень.AddRange(addТретьеЧисло(per, i + 1, per2, j + 1, index, listPeremen));
                                 }
@@ -167,7 +167,7 @@ namespace Решатель
                         var per2 = listPeremen[index2];
                         if (per2.Kategor == true && per.Name != per2.Name)
                         {
-                            for (int j = 0; j < per.ValueКатегория.Count; j++)
+                            for (int j = 0; j < per2.ValueКатегория.Count-1; j++)
                             {
                                 threeСтепень.AddRange(addТретьеЧисло(per, -1, per2, j + 1, index, listPeremen));
                             }
@@ -196,7 +196,11 @@ namespace Решатель
 
         private void GeneratorUravneniy(List<Peremennaya> listPeremen, List<Kombinacia> allkombo)
         {
+            List<Uravnenie> urlist = new List<Uravnenie>();
+            for (int i=0; i < allkombo.Count;i++)
+            {
 
+            }
         }
     }
 }

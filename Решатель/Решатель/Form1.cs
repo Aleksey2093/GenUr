@@ -71,6 +71,8 @@ namespace Решатель
                     massiv_переменных.Add(addNewKategor("X" + i.ToString(), valueName));
                 }
             }
+            GeneratorВариантов gen = new GeneratorВариантов();
+            gen.GeneratorVariantov(massiv_переменных);
         }
     }
 }
