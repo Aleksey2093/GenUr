@@ -162,22 +162,11 @@ namespace ConsoleApplication1
             }
 
             int st = 0, en = kolvotest;
-            //while(true)
+
             {
-                /*if (st+300000 < kolvotest-100)
-                {
-                    en = st + 300000;
-                } 
-                else if (st < kolvotest)
-                {
-                    en = kolvotest;
-                }
-                else
-                {
-                    break;
-                }*/
+
                 String[] lines = new String[en - st];
-                /*Parallel.For(st, en, (i, state) =>*/
+
                 for (int i = st; i < en; i++)
                 {
                     double[,] X = new double[nlist, catразмермаксимальный];
@@ -211,14 +200,13 @@ namespace ConsoleApplication1
                     scet++;
                     if (scet % 100000 == 0)
                         Console.WriteLine("сейчас " + scet + ", осталось " + (kolvotest - scet) + ", всего " + kolvotest + ";");
-                }//);
+                }
 
-                String tmpp;// = lines[i].Replace(",", ";");
+                String tmpp;
                 if (test_or_learn)
                     for (int i = 0; i < lines.Length; i++)
                     {
                         tmpp = lines[i];
-                        //if (tmpp != null)
                         {
                             file_lean_csv.WriteLine(tmpp);
                             tmpp = lines[i].Replace(",", ";");
@@ -229,25 +217,12 @@ namespace ConsoleApplication1
                     for (int i = 0; i < lines.Length; i++)
                     {
                         tmpp = lines[i];
-                        //if (tmpp != null)
                         {
                             file_test_csv.WriteLine(tmpp);
                             tmpp = lines[i].Replace(",", ";");
                             file_excel_test.WriteLine(tmpp);
                         }
                     }
-                /*String filenamest;
-                if (!test_or_learn)
-                    filenamest = "test";
-                else
-                    filenamest = "learn";
-                System.IO.File.WriteAllLines(directoriya_to_file + filenamest +".csv", lines, Encoding.UTF8);
-                Parallel.For(0, kolvotest, (i, state) =>
-                {
-                    String tmp = lines[i].Replace(",", ";");
-                    lines[i] = tmp;
-                });
-                System.IO.File.WriteAllLines(directoriya_to_file + filenamest +"_excel.csv", lines, Encoding.UTF8);*/
                 st += 300000;
             }
         exit: ;
@@ -272,11 +247,6 @@ namespace ConsoleApplication1
                 randf = 100;
             int dateee = DateTime.Now.Year+DateTime.Now.Month+DateTime.Now.Day+DateTime.Now.Hour+DateTime.Now.Minute+DateTime.Now.Millisecond;
             Random random = new Random(rand+dateee);
-            /*int catразмермаксимальный = 0;
-            for (int i = 0; i < qqcatigoriyas.Count; i++)
-                if (catразмермаксимальный < qqcatigoriyas[i].zn_value.Count)
-                    catразмермаксимальный = qqcatigoriyas[i].zn_value.Count;
-            catразмермаксимальный += 1;*/
             for (int i = 1; i < nlist; i++)
             {
                 X[i, 0] = random.Next(1, randf);
@@ -316,31 +286,22 @@ namespace ConsoleApplication1
              * -------------------------
              * -------------------------
              */
-            double Y = X[1, 0] * X[15, 0]
-                + X[2, 0] * X[19, 0]
-                + 2 * X[3, 2] * X[16, 0]
-                + 2 * X[7, 0] * X[18, 0]
-                + X[5, 2] * X[13, 0]
-                + X[6, 1] * X[7, 0]
-                + X[6, 2] * X[19, 0]
-                + 3 * X[8, 1] * X[18, 0]
-                + 3 * X[8, 2] * X[20, 0]
-                + X[8, 1] * X[10, 0]
-                + 2 * X[9, 0] * X[16, 0]
-                + X[11, 0] * X[6, 1]
-                + X[8, 2] * X[4, 0]
-                + 2 * X[13, 0] * X[5, 1]
-                + 3 * X[14, 0] * X[12, 0]
-                + X[20, 0] * X[5, 2]
-                + X[15, 0] * X[6, 1]
-                + X[6, 2] * X[17, 0]
-                + X[7, 0] * X[20, 0]
-                + 2 * X[18, 0] * X[3, 1]
-                + 2 * X[19, 0] * X[8, 2];
+            double Y = 0;
             random = new Random(DateTime.Now.Millisecond);
             //Console.WriteLine("!!!!!!!!!!!\t"+ rand +"\tY = " + Y);
             double rrr = 0;
-
+            if (test_or_learn)
+                for (int i = 1; i < nlist; i++)
+                {
+                    while (true)
+                    {
+                        rrr = random.NextDouble();
+                        //if (rrr <= 0.9)
+                        break;
+                    }
+                    if (X[i, 1] == -1)
+                        X[i, 0] += rrr;
+                }
             if (test_or_learn)
             {
                 while (true)
