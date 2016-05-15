@@ -19,6 +19,7 @@ namespace Решатель
                     for (int i = 0; i < per.ValueКатегория.Count - 1; i++)
                     {
                         item = new Kombinacia();
+                        item.koef = 1;
                         item.stepengen = 1;
                         item.onePer = per;
                         item.oneValueNumbler = i + 1;
@@ -27,6 +28,7 @@ namespace Решатель
                 }
                 else
                 {
+                    item.koef = 1;
                     item.stepengen = 1;
                     item.onePer = per;
                     oneСтепень.Add(item);
@@ -38,6 +40,7 @@ namespace Решатель
         private Kombinacia addВтороеЧисло(Peremennaya per, int i, Peremennaya per2, int j)
         {
             Kombinacia item = new Kombinacia();
+            item.koef = 1;
             item.onePer = per;
             item.oneValueNumbler = i;
             item.stepengen = 2;
@@ -106,6 +109,7 @@ namespace Решатель
                     for (int k = 0; k < per3.ValueКатегория.Count - 1; k++)
                     {
                         Kombinacia item = new Kombinacia();
+                        item.koef = 1;
                         item.onePer = per;
                         item.oneValueNumbler = i;
                         item.stepengen = 3;
@@ -119,6 +123,7 @@ namespace Решатель
                 else if (per3.Kategor == false)
                 {
                     Kombinacia item = new Kombinacia();
+                    item.koef = 1;
                     item.onePer = per;
                     item.oneValueNumbler = i;
                     item.stepengen = 3;
@@ -206,29 +211,62 @@ namespace Решатель
             GeneratorUravneniy(listPeremen, alllist);
         }
 
-        private void KombinaciaElementa(List<Kombinacia> allkombo)
+        private List<Uravnenie> getKombinaciaElementa(List<Kombinacia> allkombo, int dlina, int kolvar)
         {
-            List<Kombinacia> list = new List<Kombinacia>();
-            for (int i=0;i<allkombo.Count;i++)
+            List<Uravnenie> urlist = new List<Uravnenie>();
+            List<List<Kombinacia>> kombivar = new List<List<Kombinacia>>();
+            Parallel.For(0,kolvar,(i,state)=>
             {
-
+                List<Kombinacia> t = new List<Kombinacia>();
+                for (int j=0;j<dlina;j++)
+                {
+                    t.Add(new Kombinacia());
+                }
+                kombivar.Add(t);
+            });
+            for (int j = 0; j < dlina; j++)
+            {
+                int indexstart = j, i = 0;
+                while (i < kolvar)
+                {
+                    for (int k = indexstart; k < allkombo.Count; k++)
+                    {
+                        kombivar[i][j] = allkombo[k];
+                        i++;
+                    }
+                }
             }
+            for (int i = 0; i < kolvar;i++ )
+            {
+                Uravnenie ur = new Uravnenie();
+                ur.list.AddRange(kombivar[i]);
+                urlist.Add(ur);
+            }
+            return urlist;
+        }
+
+        private int getFactorial(int dlinna)
+        {
+            int res = 0;
+            for (int i=0;i<dlinna;i++)
+            {
+                res += i;
+            }
+            return res;
         }
 
         private void GeneratorUravneniy(List<Peremennaya> listPeremen, List<Kombinacia> allkombo)
         {
             List<Uravnenie> urlist = new List<Uravnenie>();
-            int dlinna = (int)((double)listPeremen.Count / (double)3);
-            while (dlinna < listPeremen.Count * 2)
+            int dlina = listPeremen.Count;
+            while (dlina < listPeremen.Count * 2)
             {
-                int kolvovar = 0;
-                List<List<Kombinacia>> listlist = new List<List<Kombinacia>>();
-                for (int i = 0; i < dlinna;i++)
-                {
-
-                }
-                dlinna++;
-            } //while (dlinna < listPeremen.Count * 2)
+                int kolvovar = (int)Math.Pow(dlina, allkombo.Count);
+                kolvovar = kolvovar - getFactorial(dlina);
+                urlist.AddRange(getKombinaciaElementa(allkombo, dlina, kolvovar));
+                dlina++;
+            }
+            Console.WriteLine("Комбинаций уравнения " + urlist.Count);
         }
     }
 }
