@@ -316,22 +316,31 @@ namespace ConsoleApplication1
              * -------------------------
              * -------------------------
              */
-            double Y = X[1, 0];
+            double Y = X[1, 0] * X[15, 0]
+                + X[2, 0] * X[19, 0]
+                + 2 * X[3, 2] * X[16, 0]
+                + 2 * X[7, 0] * X[18, 0]
+                + X[5, 2] * X[13, 0]
+                + X[6, 1] * X[7, 0]
+                + X[6, 2] * X[19, 0]
+                + 3 * X[8, 1] * X[18, 0]
+                + 3 * X[8, 2] * X[20, 0]
+                + X[8, 1] * X[10, 0]
+                + 2 * X[9, 0] * X[16, 0]
+                + X[11, 0] * X[6, 1]
+                + X[8, 2] * X[4, 0]
+                + 2 * X[13, 0] * X[5, 1]
+                + 3 * X[14, 0] * X[12, 0]
+                + X[20, 0] * X[5, 2]
+                + X[15, 0] * X[6, 1]
+                + X[6, 2] * X[17, 0]
+                + X[7, 0] * X[20, 0]
+                + 2 * X[18, 0] * X[3, 1]
+                + 2 * X[19, 0] * X[8, 2];
             random = new Random(DateTime.Now.Millisecond);
             //Console.WriteLine("!!!!!!!!!!!\t"+ rand +"\tY = " + Y);
             double rrr = 0;
-            if (test_or_learn)
-                for (int i = 1; i < nlist; i++)
-                {
-                    while (true)
-                    {
-                        rrr = random.NextDouble();
-                        //if (rrr <= 0.9)
-                        break;
-                    }
-                    if (X[i, 1] == -1)
-                        X[i, 0] += rrr;
-                }
+
             if (test_or_learn)
             {
                 while (true)
