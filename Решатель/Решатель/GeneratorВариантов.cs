@@ -214,13 +214,13 @@ namespace Решатель
         private List<Uravnenie> getKombinaciaElementa(List<Kombinacia> allkombo, int dlina, int kolvar)
         {
             List<Uravnenie> urlist = new List<Uravnenie>();
-            List<List<Kombinacia>> kombivar = new List<List<Kombinacia>>();
+            List<List<int>> kombivar = new List<List<int>>();
             Parallel.For(0,kolvar,(i,state)=>
             {
-                List<Kombinacia> t = new List<Kombinacia>();
+                List<int> t = new List<int>();
                 for (int j=0;j<dlina;j++)
                 {
-                    t.Add(new Kombinacia());
+                    t.Add(new int());
                 }
                 kombivar.Add(t);
             });
@@ -231,7 +231,7 @@ namespace Решатель
                 {
                     for (int k = indexstart; k < allkombo.Count; k++)
                     {
-                        kombivar[i][j] = allkombo[k];
+                        kombivar[i][j] = k;
                         i++;
                     }
                 }
@@ -239,7 +239,7 @@ namespace Решатель
             for (int i = 0; i < kolvar;i++ )
             {
                 Uravnenie ur = new Uravnenie();
-                ur.list.AddRange(kombivar[i]);
+                //ur.list.AddRange(kombivar[i]);
                 urlist.Add(ur);
             }
             return urlist;
