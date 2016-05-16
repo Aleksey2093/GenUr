@@ -49,17 +49,18 @@ namespace Решатель
             return item;
         }
 
-        private List<Kombinacia> getВтораяСтепень(List<Peremennaya> listPeremen)
+        private List<List<Kombinacia>> getВтораяСтепень(List<Peremennaya> listPeremen)
         {
-            List<Kombinacia> twoСтепень = new List<Kombinacia>();
+            List<List<Kombinacia>> twotwo = new List<List<Kombinacia>>();
             for (int index = 0; index < listPeremen.Count; index++)
             {
+                List<Kombinacia> twoСтепень = new List<Kombinacia>();
                 var per = listPeremen[index];
                 if (per.Kategor)
                 {
                     for (int i = 0; i < per.ValueКатегория.Count - 1; i++)
                     {
-                        for (int index2 = index; index2 < listPeremen.Count; index2++)
+                        for (int index2 = 0/*index*/; index2 < listPeremen.Count; index2++)
                         {
                             var per2 = listPeremen[index2];
                             if (per2.Kategor == true && per.Name != per2.Name)
@@ -74,11 +75,13 @@ namespace Решатель
                                 twoСтепень.Add(addВтороеЧисло(per, i + 1, per2, -1));
                             }
                         }
+                        twotwo.Add(twoСтепень);
+                        twoСтепень = new List<Kombinacia>();
                     }
                 }
                 else
                 {
-                    for (int index2 = index; index2 < listPeremen.Count; index2++)
+                    for (int index2 = 0/*index*/; index2 < listPeremen.Count; index2++)
                     {
                         var per2 = listPeremen[index2];
                         if (per2.Kategor == true && per.Name != per2.Name)
@@ -93,15 +96,17 @@ namespace Решатель
                             twoСтепень.Add(addВтороеЧисло(per, -1, per2, -1));
                         }
                     }
+                    twotwo.Add(twoСтепень);
+                    twoСтепень = new List<Kombinacia>();
                 }
             }
-            return twoСтепень;
+            return twotwo;
         }
 
         private List<Kombinacia> addТретьеЧисло(Peremennaya per, int i, Peremennaya per2, int j, int index, List<Peremennaya> listPemen)
         {
             List<Kombinacia> items = new List<Kombinacia>();
-            for (int index3 = index; index3 < listPemen.Count; index3++)
+            for (int index3 = /*index*/0; index3 < listPemen.Count; index3++)
             {
                 var per3 = listPemen[index3];
                 if (per3.Kategor && per3.Name != per.Name && per3.Name != per2.Name)
@@ -137,17 +142,18 @@ namespace Решатель
             return items;
         }
 
-        private List<Kombinacia> getТретьяСтепень(List<Peremennaya> listPeremen)
+        private List<List<Kombinacia>> getТретьяСтепень(List<Peremennaya> listPeremen)
         {
-            List<Kombinacia> threeСтепень = new List<Kombinacia>();
+            List<List<Kombinacia>> threethree = new List<List<Kombinacia>>();
             for (int index = 0; index < listPeremen.Count; index++)
             {
+                List<Kombinacia> threeСтепень = new List<Kombinacia>();
                 var per = listPeremen[index];
                 if (per.Kategor)
                 {
                     for (int i = 0; i < per.ValueКатегория.Count - 1; i++)
                     {
-                        for (int index2 = index; index2 < listPeremen.Count; index2++)
+                        for (int index2 = 0/*index*/; index2 < listPeremen.Count; index2++)
                         {
                             var per2 = listPeremen[index2];
                             if (per2.Kategor == true && per.Name != per2.Name)
@@ -162,11 +168,13 @@ namespace Решатель
                                 threeСтепень.AddRange(addТретьеЧисло(per, i + 1, per2, -1, index, listPeremen));
                             }
                         }
+                        threethree.Add(threeСтепень);
+                        threeСтепень = new List<Kombinacia>();
                     }
                 }
                 else
                 {
-                    for (int index2 = index; index2 < listPeremen.Count; index2++)
+                    for (int index2 = 0/*index*/; index2 < listPeremen.Count; index2++)
                     {
                         var per2 = listPeremen[index2];
                         if (per2.Kategor == true && per.Name != per2.Name)
@@ -181,16 +189,18 @@ namespace Решатель
                             threeСтепень.AddRange(addТретьеЧисло(per, -1, per2, -1, index, listPeremen));
                         }
                     }
+                    threethree.Add(threeСтепень);
+                    threeСтепень = new List<Kombinacia>();
                 }
             }
-            return threeСтепень;
+            return threethree;
         }
 
         public void GeneratorVariantov(List<Peremennaya> listPeremen)
         {
             List<Kombinacia> oneСтепень = new List<Kombinacia>();//формирование первой степени
-            List<Kombinacia> twoСтепень = new List<Kombinacia>();//формирование второй степени
-            List<Kombinacia> threeСтепень = new List<Kombinacia>();//фомирование третьей степени
+            List<List<Kombinacia>> twoСтепень = new List<List<Kombinacia>>();//формирование второй степени
+            List<List<Kombinacia>> threeСтепень = new List<List<Kombinacia>>();//фомирование третьей степени
 
             Parallel.Invoke(() =>
                 {
@@ -204,11 +214,18 @@ namespace Решатель
                 {
                     threeСтепень = getТретьяСтепень(listPeremen);
                 });
-            List<Kombinacia> alllist = new List<Kombinacia>();
-            alllist.AddRange(oneСтепень);
-            alllist.AddRange(twoСтепень);
-            alllist.AddRange(threeСтепень);
-            GeneratorUravneniy(listPeremen, alllist);
+            List<List<Kombinacia>> tableСтепеней = new List<List<Kombinacia>>();
+            for (int i = 0; i < oneСтепень.Count; i++ )
+            {
+                List<Kombinacia> tmp = new List<Kombinacia>();
+                tmp.Add(oneСтепень[i]);
+                tableСтепеней.Add(tmp);
+                if (i < twoСтепень.Count)
+                    tableСтепеней[i].AddRange(twoСтепень[i]);
+                if (i < threeСтепень.Count)
+                    tableСтепеней[i].AddRange(threeСтепень[i]);
+            }
+            //GeneratorUravneniy(listPeremen, alllist);
         }
 
         private List<Uravnenie> getKombinaciaElementa(List<Kombinacia> allkombo, int dlina, int kolvar)
@@ -239,7 +256,6 @@ namespace Решатель
             for (int i = 0; i < kolvar;i++ )
             {
                 Uravnenie ur = new Uravnenie();
-                //ur.list.AddRange(kombivar[i]);
                 urlist.Add(ur);
             }
             return urlist;
