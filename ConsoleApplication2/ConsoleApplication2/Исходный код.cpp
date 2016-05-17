@@ -108,14 +108,6 @@ vector<double> GradientDescent(int N, vector<double> x0, int&Iterations)
 		{
 			cur_x = goldensectionoptimize(cur_x, -10, 10, 100);
 		}
-
-
-
-
-
-
-
-
 		if (OSTANOV == 1)
 		{
 			//условие останова 1
@@ -126,7 +118,6 @@ vector<double> GradientDescent(int N, vector<double> x0, int&Iterations)
 			if (s<EPS)
 				return cur_x;
 		}
-
 		if (OSTANOV == 2)
 		{
 			//условие останова 2
@@ -134,9 +125,7 @@ vector<double> GradientDescent(int N, vector<double> x0, int&Iterations)
 			if (s<EPS)
 				return	cur_x;
 		}
-
 	}
-
 	return cur_x;
 }
 

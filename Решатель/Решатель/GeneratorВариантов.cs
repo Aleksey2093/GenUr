@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Решатель
 {
@@ -224,8 +225,104 @@ namespace Решатель
                     tableСтепеней[i].AddRange(twoСтепень[i]);
                 if (i < threeСтепень.Count)
                     tableСтепеней[i].AddRange(threeСтепень[i]);
+                Kombinacia kombo = null;
+                tableСтепеней[i].Add(kombo);
             }
-            //GeneratorUravneniy(listPeremen, alllist);
+            GeneratorUraveniy(listPeremen, tableСтепеней, 3);
+        }
+
+
+        private void GeneratorUraveniy(List<Peremennaya> listPeremens, List<List<Kombinacia>> tableСтепеней, int stepenУР)
+        {
+            int ostatok, dlina = Math.DivRem(tableСтепеней.Count, stepenУР, out ostatok);
+            //у нас есть минимальная длина уравнения с учетом возможной степени уравнения и остаток. Максимальная длинна уравнения не может быть ограничена.
+            //пока используем способ пустой переменной для снижения длинны уравнения
+            int[] indexs = new int[tableСтепеней.Count]; //индексный массив который будет выбирать нужные нам варианты для искомого уравнения при генерации 1000 вариантов они будут отправлены в решатель
+            Parallel.For(0, indexs.Length, (i, state) => { indexs[i] = 0; });
+            //1000 уравнений будут обрабатываться в параллельных потоках
+            List<Uravnenie> listUR = new List<Uravnenie>();
+            Uravnenie urav = new Uravnenie();
+            List<List<ValuePeremen>> values_lean = getLeanValueFromFile();
+            GradientСпукск grad = new GradientСпукск();
+            while(true)
+            {
+                if (indexs[0] == tableСтепеней[0].Count)
+                { //Если вдруг дошли до самого последнего элемента первого столбца то все попытки тщенты.
+                    Console.WriteLine("Восстановить уравнение не удалось");
+                    break;
+                }
+                List<Kombinacia> k = new List<Kombinacia>();
+                for (int i = 0; i < indexs.Length;i++ )
+                {
+                    k.Add(tableСтепеней[i][indexs[i]]);
+                }
+                grad.Gradient(listPeremens, k, values_lean);
+                indexs[indexs.Length - 1]++; //увеличиваем индекс последнего столбца
+                for (int i=tableСтепеней.Count - 1;i>0;i--)
+                {
+                    if (indexs[i] == tableСтепеней[i].Count)
+                    {
+                        indexs[i] = 0;
+                        indexs[i - 1]++;
+                    }
+                }
+            }
+        }
+
+        private List<List<ValuePeremen>> getLeanValueFromFile()
+        {
+            List<List<ValuePeremen>> list = new List<List<ValuePeremen>>();
+            OpenFileDialog openfile = new OpenFileDialog();
+            DialogResult res = openfile.ShowDialog();
+            if (res != System.Windows.Forms.DialogResult.OK)
+                return null;
+            String[] lines = System.IO.File.ReadAllLines(openfile.FileName);
+            for (int i = 0; i < lines.Length; i++)
+            {
+                String tmp = "";
+                List<ValuePeremen> line = new List<ValuePeremen>();
+                for (int j = 0; j <lines[i].Length; j++)
+                {
+                    if (lines[i][j] != ',')
+                        tmp += lines[i][j];
+                    else
+                    {
+                        ValuePeremen v = new ValuePeremen();
+                        double r = getDouble(tmp);
+                        if (r != -99999999)
+                        {
+                            v.KatOrValue = false;
+                            v.ValueDouble = r;
+                        }
+                        else
+                        {
+                            v.KatOrValue = true;
+                            v.ValueKategor = tmp;
+                        }
+                        line.Add(v);
+                        tmp = "";
+                    }
+                }
+                list.Add(line);
+            }
+            return list;
+        }
+
+        private double getDouble(string tmp)
+        {
+            double res = new double();
+            if (double.TryParse(tmp, out res))
+                return res;
+            else if (double.TryParse(tmp.Replace(",", "."), out res))
+                return res;
+            else if (double.TryParse(tmp.Replace(".", ","), out res))
+                return res;
+            else
+            {
+                //MessageBox.Show("Ошибка преобразования числового значения из файла обучения. Возможно в файле ошибка.", 
+                //    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                return -99999999;
+            }
         }
 
         private List<Uravnenie> getKombinaciaElementa(List<Kombinacia> allkombo, int dlina, int kolvar)
@@ -268,7 +365,7 @@ namespace Решатель
             return res;
         }
 
-        private void GeneratorUravneniy(List<Peremennaya> listPeremen, List<Kombinacia> allkombo)
+        private void GeneratorUravneniyOld(List<Peremennaya> listPeremen, List<Kombinacia> allkombo)
         {
             List<Uravnenie> urlist = new List<Uravnenie>();
             int dlina = listPeremen.Count;

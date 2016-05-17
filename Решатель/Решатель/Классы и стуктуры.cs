@@ -65,6 +65,29 @@ namespace Решатель
         }
     }
 
+    public class ValuePeremen
+    {
+        private bool boolkat;
+        private double valuedob;
+        private string valuekat;
+
+        public bool KatOrValue
+        {
+            get { return boolkat; }
+            set { boolkat = value; }
+        }
+        public double ValueDouble
+        {
+            get { return valuedob; }
+            set { valuedob = value; }
+        }
+        public string ValueKategor
+        {
+            get { return valuekat; }
+            set { valuekat = value; }
+        }
+    }
+
     public class Peremennaya
     {
         private string name;
@@ -92,6 +115,22 @@ namespace Решатель
         {
             get { return kategorValue; }
             set { kategorValue = value; }
+        }
+        public bool setValueKategor(string value)
+        {
+            if (Kategor)
+            {
+                for (int i = 0; i < kategorValue.Count;i++ )
+                {
+                    if (value == kategorValue[i].NameKat)
+                        kategorValue[i].ValueKatBool = true;
+                    else
+                        kategorValue[i].ValueKatBool = false;
+                }                    
+                return true;
+            }
+            else
+                return false;
         }
     }
 }
