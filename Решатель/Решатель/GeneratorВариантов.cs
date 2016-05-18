@@ -23,7 +23,7 @@ namespace Решатель
                         item.koef = 1;
                         item.stepengen = 1;
                         item.onePer = per;
-                        item.oneValueNumbler = i + 1;
+                        item.oneValueNumbler = i;
                         oneСтепень.Add(item);
                     }
                 }
@@ -68,7 +68,7 @@ namespace Решатель
                             {
                                 for (int j = 0; j < per.ValueКатегория.Count - 1; j++)
                                 {
-                                    twoСтепень.Add(addВтороеЧисло(per, i + 1, per2, j + 1));
+                                    twoСтепень.Add(addВтороеЧисло(per, i + 1, per2, j));
                                 }
                             }
                             else if (per2.Kategor == false)
@@ -161,7 +161,7 @@ namespace Решатель
                             {
                                 for (int j = 0; j < per.ValueКатегория.Count - 1; j++)
                                 {
-                                    threeСтепень.AddRange(addТретьеЧисло(per, i + 1, per2, j + 1, index, listPeremen));
+                                    threeСтепень.AddRange(addТретьеЧисло(per, i + 1, per2, j, index, listPeremen));
                                 }
                             }
                             else if (per2.Kategor == false)
@@ -182,7 +182,7 @@ namespace Решатель
                         {
                             for (int j = 0; j < per2.ValueКатегория.Count - 1; j++)
                             {
-                                threeСтепень.AddRange(addТретьеЧисло(per, -1, per2, j + 1, index, listPeremen));
+                                threeСтепень.AddRange(addТретьеЧисло(per, -1, per2, j, index, listPeremen));
                             }
                         }
                         else if (per2.Kategor == false)
@@ -234,31 +234,38 @@ namespace Решатель
 
         private void GeneratorUraveniy(List<Peremennaya> listPeremens, List<List<Kombinacia>> tableСтепеней, int stepenУР)
         {
+            double res = 10000000000, resold;
             int ostatok, dlina = Math.DivRem(tableСтепеней.Count, stepenУР, out ostatok);
             //у нас есть минимальная длина уравнения с учетом возможной степени уравнения и остаток. Максимальная длинна уравнения не может быть ограничена.
             //пока используем способ пустой переменной для снижения длинны уравнения
-            int[] indexs = new int[tableСтепеней.Count]; //индексный массив который будет выбирать нужные нам варианты для искомого уравнения при генерации 1000 вариантов они будут отправлены в решатель
+            int[] indexs = new int[tableСтепеней.Count], resindex = new int[1]; //индексный массив который будет выбирать нужные нам варианты для искомого уравнения при генерации 1000 вариантов они будут отправлены в решатель
             Parallel.For(0, indexs.Length, (i, state) => { indexs[i] = 0; });
             //1000 уравнений будут обрабатываться в параллельных потоках
             List<Uravnenie> listUR = new List<Uravnenie>();
             Uravnenie urav = new Uravnenie();
             List<List<ValuePeremen>> values_lean = getLeanValueFromFile();
             GradientСпукск grad = new GradientСпукск();
-            while(true)
+            while (true)
             {
                 if (indexs[0] == tableСтепеней[0].Count)
                 { //Если вдруг дошли до самого последнего элемента первого столбца то все попытки тщенты.
-                    Console.WriteLine("Восстановить уравнение не удалось");
+                    Console.WriteLine("Комбинации закончились");
                     break;
                 }
+
                 List<Kombinacia> k = new List<Kombinacia>();
-                for (int i = 0; i < indexs.Length;i++ )
-                {
+                for (int i = 0; i < indexs.Length; i++)
                     k.Add(tableСтепеней[i][indexs[i]]);
+
+                resold = grad.Gradient(listPeremens, k, values_lean);
+                if (resold < res)
+                {
+                    res = resold;
+                    resindex = indexs;
                 }
-                grad.Gradient(listPeremens, k, values_lean);
+
                 indexs[indexs.Length - 1]++; //увеличиваем индекс последнего столбца
-                for (int i=tableСтепеней.Count - 1;i>0;i--)
+                for (int i = tableСтепеней.Count - 1; i > 0; i--)
                 {
                     if (indexs[i] == tableСтепеней[i].Count)
                     {
@@ -267,6 +274,18 @@ namespace Решатель
                     }
                 }
             }
+            printResult(tableСтепеней, resindex);
+        }
+
+        private void printResult(List<List<Kombinacia>> tableСтепеней, int[] resindex)
+        {
+            string res = "";
+            for (int i=0;i<resindex.Length;i++)
+            {
+                res += tableСтепеней[i][resindex[i]].GetStringPrint + " + ";
+            }
+            res = res.Remove(res.Length - 3);
+            MessageBox.Show("Уравнение - " + res);
         }
 
         private List<List<ValuePeremen>> getLeanValueFromFile()

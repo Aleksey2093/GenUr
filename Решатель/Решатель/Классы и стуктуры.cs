@@ -30,14 +30,43 @@ namespace Решатель
                     res *= onePer.ValueПеремен;
                 else
                     res *= onePer.ValueКатегория[oneValueNumbler].ValueKatDouble;
-                if (twoValueNumbler == -1)
-                    res *= twoPer.ValueПеремен;
+                if (stepengen >= 2)
+                {
+                    if (twoValueNumbler == -1)
+                        res *= twoPer.ValueПеремен;
+                    else
+                        res *= twoPer.ValueКатегория[twoValueNumbler].ValueKatDouble;
+                }
+                if (stepengen >= 3)
+                {
+                    if (threeValueNumbler == -1)
+                        res *= threePer.ValueПеремен;
+                    else
+                        res *= threePer.ValueКатегория[threeValueNumbler].ValueKatDouble;
+                }
+                return res;
+            }
+        }
+
+        public string GetStringPrint
+        {
+            get 
+            {
+                string res = "";
+                if (onePer.Kategor)
+                    res += onePer.Name + (oneValueNumbler + 1);
                 else
-                    res *= twoPer.ValueКатегория[twoValueNumbler].ValueKatDouble;
-                if (threeValueNumbler == -1)
-                    res *= threePer.ValueПеремен;
+                    res += onePer.Name;
+                res += "*";
+                if (twoPer.Kategor)
+                    res += twoPer.Name + (twoValueNumbler + 1);
                 else
-                    res *= threePer.ValueКатегория[threeValueNumbler].ValueKatDouble;
+                    res += twoPer.Name;
+                res += "*";
+                if (threePer.Kategor)
+                    res += threePer.Name + (threeValueNumbler + 1);
+                else
+                    res += threePer.Name;
                 return res;
             }
         }
@@ -116,6 +145,19 @@ namespace Решатель
             get { return kategorValue; }
             set { kategorValue = value; }
         }
+        public int[] getKatValues(string value)
+        {
+            int[] res = new int[kategorValue.Count];
+            for (int i = 0; i < kategorValue.Count;i++)
+            {
+                if (kategorValue[i].NameKat == value)
+                    res[i] = 1;
+                else
+                    res[i] = 0;
+            }
+            return res;
+        }
+
         public bool setValueKategor(string value)
         {
             if (Kategor)
