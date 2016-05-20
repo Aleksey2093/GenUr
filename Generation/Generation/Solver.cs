@@ -307,8 +307,12 @@ namespace Generation
             string[] Vars = allVars.Split(' ');
             double[] Q = new double[Vars.Length];
             int ind = 0;
-            Array.ForEach(Qs.Trim().Split(' '), x => Q[ind++] = double.Parse(x.Replace('.', ',')));
-            string[] allData = File.ReadAllLines(fileData);
+            try
+            {
+                Array.ForEach(Qs.Trim().Split(' '), x => Q[ind++] = double.Parse(x.Replace('.', ',')));
+            }
+            catch { }
+                string[] allData = File.ReadAllLines(fileData);
             double[] result = new double[allData.Length];
             for (int i = 0; i < allData.Length; i++)
             {

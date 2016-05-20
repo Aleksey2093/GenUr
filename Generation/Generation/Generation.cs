@@ -200,7 +200,7 @@ namespace Generation
             return result.Trim().Trim('+');
         }
 
-        public static void generateDataLearning(string fileName, string formula, List<variables> list, int countRow = 200000)
+        public static void generateDataLearning(string fileName, string formula, List<variables> list, int countRow = 5000)
         {
             int allVar = 0;
             foreach (variables nd in list)

@@ -53,7 +53,7 @@ namespace Решатель
         private List<List<Kombinacia>> getВтораяСтепень(List<Peremennaya> listPeremen)
         {
             List<List<Kombinacia>> twotwo = new List<List<Kombinacia>>();
-            for (int index = 0; index < listPeremen.Count; index++)
+            for (int index = 0; index < listPeremen.Count-1; index++)
             {
                 List<Kombinacia> twoСтепень = new List<Kombinacia>();
                 var per = listPeremen[index];
@@ -61,7 +61,7 @@ namespace Решатель
                 {
                     for (int i = 0; i < per.ValueКатегория.Count - 1; i++)
                     {
-                        for (int index2 = 0/*index*/; index2 < listPeremen.Count; index2++)
+                        for (int index2 = index; index2 < listPeremen.Count; index2++)
                         {
                             var per2 = listPeremen[index2];
                             if (per2.Kategor == true && per.Name != per2.Name)
@@ -82,7 +82,7 @@ namespace Решатель
                 }
                 else
                 {
-                    for (int index2 = 0/*index*/; index2 < listPeremen.Count; index2++)
+                    for (int index2 = index; index2 < listPeremen.Count; index2++)
                     {
                         var per2 = listPeremen[index2];
                         if (per2.Kategor == true && per.Name != per2.Name)
@@ -107,7 +107,7 @@ namespace Решатель
         private List<Kombinacia> addТретьеЧисло(Peremennaya per, int i, Peremennaya per2, int j, int index, List<Peremennaya> listPemen)
         {
             List<Kombinacia> items = new List<Kombinacia>();
-            for (int index3 = /*index*/0; index3 < listPemen.Count; index3++)
+            for (int index3 = index; index3 < listPemen.Count; index3++)
             {
                 var per3 = listPemen[index3];
                 if (per3.Kategor && per3.Name != per.Name && per3.Name != per2.Name)
@@ -146,7 +146,7 @@ namespace Решатель
         private List<List<Kombinacia>> getТретьяСтепень(List<Peremennaya> listPeremen)
         {
             List<List<Kombinacia>> threethree = new List<List<Kombinacia>>();
-            for (int index = 0; index < listPeremen.Count; index++)
+            for (int index = 0; index < listPeremen.Count-1; index++)
             {
                 List<Kombinacia> threeСтепень = new List<Kombinacia>();
                 var per = listPeremen[index];
@@ -154,7 +154,7 @@ namespace Решатель
                 {
                     for (int i = 0; i < per.ValueКатегория.Count - 1; i++)
                     {
-                        for (int index2 = 0/*index*/; index2 < listPeremen.Count; index2++)
+                        for (int index2 = index; index2 < listPeremen.Count; index2++)
                         {
                             var per2 = listPeremen[index2];
                             if (per2.Kategor == true && per.Name != per2.Name)
@@ -175,7 +175,7 @@ namespace Решатель
                 }
                 else
                 {
-                    for (int index2 = 0/*index*/; index2 < listPeremen.Count; index2++)
+                    for (int index2 = index; index2 < listPeremen.Count; index2++)
                     {
                         var per2 = listPeremen[index2];
                         if (per2.Kategor == true && per.Name != per2.Name)
@@ -215,78 +215,25 @@ namespace Решатель
                 {
                     threeСтепень = getТретьяСтепень(listPeremen);
                 });
-            List<List<Kombinacia>> tableСтепеней = new List<List<Kombinacia>>();
-            for (int i = 0; i < oneСтепень.Count; i++ )
+            List<Kombinacia> allСтепень = new List<Kombinacia>();
+            allСтепень.AddRange(oneСтепень);
+            for (int i = 0; i < twoСтепень.Count;i++ )
             {
-                List<Kombinacia> tmp = new List<Kombinacia>();
-                tmp.Add(oneСтепень[i]);
-                tableСтепеней.Add(tmp);
-                if (i < twoСтепень.Count)
-                    tableСтепеней[i].AddRange(twoСтепень[i]);
-                if (i < threeСтепень.Count)
-                    tableСтепеней[i].AddRange(threeСтепень[i]);
-                Kombinacia kombo = null;
-                tableСтепеней[i].Add(kombo);
+                allСтепень.AddRange(twoСтепень[i]);
             }
-            GeneratorUraveniy(listPeremen, tableСтепеней, 3);
+            for (int i = 0; i < threeСтепень.Count; i++)
+                allСтепень.AddRange(threeСтепень[i]);
+                GeneratorUraveniy(listPeremen, allСтепень);
         }
 
 
-        private void GeneratorUraveniy(List<Peremennaya> listPeremens, List<List<Kombinacia>> tableСтепеней, int stepenУР)
+        private void GeneratorUraveniy(List<Peremennaya> listPeremens, List<Kombinacia> allstepen)
         {
-            double res = 10000000000, resold;
-            int ostatok, dlina = Math.DivRem(tableСтепеней.Count, stepenУР, out ostatok);
-            //у нас есть минимальная длина уравнения с учетом возможной степени уравнения и остаток. Максимальная длинна уравнения не может быть ограничена.
-            //пока используем способ пустой переменной для снижения длинны уравнения
-            int[] indexs = new int[tableСтепеней.Count], resindex = new int[1]; //индексный массив который будет выбирать нужные нам варианты для искомого уравнения при генерации 1000 вариантов они будут отправлены в решатель
-            Parallel.For(0, indexs.Length, (i, state) => { indexs[i] = 0; });
-            //1000 уравнений будут обрабатываться в параллельных потоках
-            List<Uravnenie> listUR = new List<Uravnenie>();
-            Uravnenie urav = new Uravnenie();
-            List<List<ValuePeremen>> values_lean = getLeanValueFromFile();
-            GradientСпукск grad = new GradientСпукск();
-            while (true)
-            {
-                if (indexs[0] == tableСтепеней[0].Count)
-                { //Если вдруг дошли до самого последнего элемента первого столбца то все попытки тщенты.
-                    Console.WriteLine("Комбинации закончились");
-                    break;
-                }
-
-                List<Kombinacia> k = new List<Kombinacia>();
-                for (int i = 0; i < indexs.Length; i++)
-                    k.Add(tableСтепеней[i][indexs[i]]);
-
-                resold = grad.Gradient(listPeremens, k, values_lean);
-                if (resold < res)
-                {
-                    res = resold;
-                    resindex = indexs;
-                }
-
-                indexs[indexs.Length - 1]++; //увеличиваем индекс последнего столбца
-                for (int i = tableСтепеней.Count - 1; i > 0; i--)
-                {
-                    if (indexs[i] == tableСтепеней[i].Count)
-                    {
-                        indexs[i] = 0;
-                        indexs[i - 1]++;
-                    }
-                }
-            }
-            printResult(tableСтепеней, resindex);
+            List<List<ValuePeremen>> leanvalues = getLeanValueFromFile();
+            GradientСпукск gradient = new GradientСпукск();
+            List<Kombinacia> resUr = gradient.gradientСпуск(listPeremens, allstepen, leanvalues);
         }
 
-        private void printResult(List<List<Kombinacia>> tableСтепеней, int[] resindex)
-        {
-            string res = "";
-            for (int i=0;i<resindex.Length;i++)
-            {
-                res += tableСтепеней[i][resindex[i]].GetStringPrint + " + ";
-            }
-            res = res.Remove(res.Length - 3);
-            MessageBox.Show("Уравнение - " + res);
-        }
 
         private List<List<ValuePeremen>> getLeanValueFromFile()
         {

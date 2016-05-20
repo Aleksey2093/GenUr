@@ -8,61 +8,34 @@ namespace Решатель
 {
     class GradientСпукск
     {
-        private double getResUr(List<Kombinacia> urav)
+        List<double> getYvalue(List<Peremennaya> peremens, List<Kombinacia> allur, List<List<ValuePeremen>> leanvals)
         {
-            double res = 0;
-            for (int i = 0; i < urav.Count; i++)
+            List<double> listY = new List<double>();
+            for (int i = 0; i < leanvals.Count; i++)
             {
-                try
-                {
-                    if (urav[i] != null)
-                    res += urav[i].GetПроизведение;
-                }
-                catch
-                {
-                    Console.WriteLine("Нулевое зн найдено в столбце " + i);
-                }
+                Parallel.For(0, peremens.Count, (j, state) =>
+                    {
+                        if (peremens[j].Kategor)
+                            peremens[j].setValueKategor(leanvals[i][j].ValueKategor);
+                        else
+                            peremens[j].ValueПеремен = leanvals[i][j].ValueDouble;
+                    });
+                double urY = 0;
+                Parallel.For(0, allur.Count, (j, state) =>
+                    {
+                        urY += allur[j].GetПроизведение;
+                    });
+                listY.Add(urY);
             }
-            return res;
+            return listY;
         }
 
-        public double Gradient(List<Peremennaya> listPeremen, List<Kombinacia> uravnenie, List<List<ValuePeremen>> valuesLean)
+        public List<Kombinacia> gradientСпуск(List<Peremennaya> peremens, List<Kombinacia> allur, List<List<ValuePeremen>> leanvalues)
         {
-            double err = 0; double res;
-            for (int j = 0; j < listPeremen.Count; j++)
-            {
-                if (listPeremen[j].Kategor)
-                {
-                    listPeremen[j].setValueKategor(valuesLean[0][j].ValueKategor);
-                }
-                else
-                {
-                    listPeremen[j].ValueПеремен = valuesLean[0][j].ValueDouble;
-                }
-                res = getResUr(uravnenie);
-                res = res - valuesLean[0][valuesLean[0].Count - 1].ValueDouble;
-                res = Math.Abs(res);
-            }
-            for (int i = 1; i < valuesLean.Count; i++)
-            {
-                for (int j = 0; j < listPeremen.Count; j++)
-                {
-                    if (listPeremen[j].Kategor)
-                    {
-                        listPeremen[j].setValueKategor(valuesLean[i][j].ValueKategor);
-                    }
-                    else
-                    {
-                        listPeremen[j].ValueПеремен = valuesLean[i][j].ValueDouble;
-                    }
-                }
-                res = getResUr(uravnenie);
-                res = res - valuesLean[i][valuesLean[0].Count - 1].ValueDouble;
-                res = Math.Abs(res);
-                err += res;
-                err = err / 2;
-            }
-            return err;
+            List<Kombinacia> resur = new List<Kombinacia>();
+            List<double> listY = getYvalue(peremens, allur, leanvalues.GetRange(0,10000));
+
+            return resur;
         }
     }
 }
