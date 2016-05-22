@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
-namespace Решатель
+namespace ConsoleApplication4Решатель
 {
     class GeneratorВариантов
     {
@@ -238,11 +237,7 @@ namespace Решатель
         private List<List<ValuePeremen>> getLeanValueFromFile()
         {
             List<List<ValuePeremen>> list = new List<List<ValuePeremen>>();
-            OpenFileDialog openfile = new OpenFileDialog();
-            DialogResult res = openfile.ShowDialog();
-            if (res != System.Windows.Forms.DialogResult.OK)
-                return null;
-            String[] lines = System.IO.File.ReadAllLines(openfile.FileName);
+            String[] lines = System.IO.File.ReadAllLines("learn.csv");
             for (int i = 0; i < lines.Length; i++)
             {
                 String tmp = "";

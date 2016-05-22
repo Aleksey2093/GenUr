@@ -1,0 +1,13 @@
+<variables>
+    <number>X1</number>
+    <number>X2</number>
+    <number>X3</number>
+    <number>X4</number>
+    <category>
+        <name>X5</name>
+        <value>Red</value>
+        <value>Green</value>
+        <value>Blue</value>
+    </category>
+    <number>X6</number>
+</variables>
