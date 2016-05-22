@@ -62,6 +62,7 @@ namespace ConsoleApplication4Решатель
         public void runProv(List<Peremennaya> listPeremens, List<Kombinacia> allst)
         {
             List<List<ValuePeremen>> testvalue = new List<List<ValuePeremen>>();
+            testvalue = getLeanValueFromFile();
             List<double> restest = new List<double>();
             Console.WriteLine("------------------res Y:");
             for (int i=0;i<testvalue.Count;i++)
@@ -76,7 +77,7 @@ namespace ConsoleApplication4Решатель
                 double Y = 0;
                 for (int j=0;j<allst.Count;j++)
                 {
-                    Y += allst[i].getPrizvedenie(true);
+                    Y += allst[j].getPrizvedenie(true);
                 }
                 Console.WriteLine(Y);
             }

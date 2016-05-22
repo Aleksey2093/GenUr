@@ -14,6 +14,7 @@ namespace ConsoleApplication4Решатель
         {
             GeneratorCombi gen = new GeneratorCombi();
             gen.GeneratorVars();
+            Console.ReadKey();
         }
     }
 }
