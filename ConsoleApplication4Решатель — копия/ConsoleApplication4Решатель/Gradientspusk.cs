@@ -34,9 +34,11 @@ namespace ConsoleApplication4Решатель
 
         public List<Kombinacia> runGradientspusk(List<Peremennaya> listPeremens, List<Kombinacia> allst, List<List<ValuePeremen>> leanvalues)
         {
+            if (leanvalues.Count > 10000)
+                leanvalues = new List<List<ValuePeremen>>(leanvalues.GetRange(0, 3000));
             Parallel.For(0, allst.Count, (i, state) => { allst[i].setKoef(0); allst[i].setDelta(0); });
             Console.WriteLine("Start graddown");
-            double err = 1, L = 0.00001;
+            double err = 1, L = 0.0001;
             double nowJ = 0, oldJ = 0;
             allst = getJnew(listPeremens, allst, leanvalues, out nowJ);
             oldJ = 0;
@@ -58,7 +60,7 @@ namespace ConsoleApplication4Решатель
                 double tmpoldJ = oldJ;
                 oldJ = nowJ;
                 allst = getJnew(listPeremens, allst, leanvalues, out nowJ);
-                err = oldJ * 0.000001;
+                //err = oldJ * 0.00001;
                 if (Math.Abs(tmpoldJ - oldJ) < Math.Abs(oldJ - nowJ))
                 {
                     L = L / 2;

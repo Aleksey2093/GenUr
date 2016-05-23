@@ -209,9 +209,11 @@ namespace ConsoleApplication4Решатель
         /// <returns></returns>
         public double getPrizvedenie(bool k)
         {
-            double res = 1;
+            double res;
             if (k)
                 res = koef;
+            else
+                res = 1;
             switch(stepengen)
             {
                 case 1:
