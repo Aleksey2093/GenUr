@@ -25,20 +25,9 @@ namespace ConsoleApplication4Решатель
                 }
                 allst.ForEach((x) => { Y += x.getPrizvedenie(true); });
                 double tm = (Y - leanvalues[i][j].getDouble()),
-                    oneminuslen = 1.0 / leanvalues.Count;
-                J += (oneminuslen / 2) * tm * tm;
-                //allst.ForEach((x) => { x.setDelta(oneminuslen * tm * x.getPrizvedenie(false)); });
-                listPeremens.ForEach((x) =>
-                {
-                    if (x.getIfKategor())
-                    {
-                        x.getListKat().ForEach((y) => { y.setDelta(oneminuslen * tm * x.getDouble(false)); });
-                    }
-                    else
-                    {
-                        x.setDelta(oneminuslen * tm * x.getDouble(false));
-                    }
-                });
+                    oneminuslen = 1.0 / (double)leanvalues.Count;
+                J += (oneminuslen / 2.0) * tm * tm;
+                allst.ForEach((x) => { x.setDelta(oneminuslen * tm * x.getPrizvedenie(false)); });
             }
             return allst;
         }
@@ -51,35 +40,20 @@ namespace ConsoleApplication4Решатель
             double nowJ = 0, oldJ = 0;
             allst = getJnew(listPeremens, allst, leanvalues, out nowJ);
             oldJ = 0;
-            List<double> tmp = new List<double>();
-            /*for (int i = 0; i < allst.Count; i++)
+            /*List<double> tmp = new List<double>();
+            for (int i = 0; i < allst.Count; i++)
             {
                 tmp.Add(0);
             }*/
             int iter = 0;
+            double[] tmp = new double[allst.Count];
             while (Math.Abs(oldJ - nowJ) > err)
             {
                 iter++;
-                tmp = new List<double>();
-                tmp.Clear();
-                for (int i = 0; i < listPeremens.Count; i++)
+                for (int i = 0; i < allst.Count; i++)
                 {
-                    if (listPeremens[i].getIfKategor())
-                    {
-                        for (int j=0;j<listPeremens[i].getListKat().Count;j++)
-                        {
-                            var x = listPeremens[i].getListKat()[j];
-                            tmp.Add(x.getKoef());
-                            x.setKoef(x.getKoef() - (L * x.getDelta()));
-                        }
-                    }
-                    else
-                    {
-                        tmp.Add(listPeremens[i].getKoef());
-                        listPeremens[i].setKoef(listPeremens[i].getKoef() - (L * listPeremens[i].getDelta()));
-                    }
-                    //tmp[i](allst[i].getKoef());
-                    //allst[i].setKoef(allst[i].getKoef() - (L * allst[i].getDelta()));
+                    tmp[i] = (allst[i].getKoef());
+                    allst[i].setKoef(allst[i].getKoef() - (L * allst[i].getDelta()));
                 }
                 double tmpoldJ = oldJ;
                 oldJ = nowJ;
@@ -89,18 +63,10 @@ namespace ConsoleApplication4Решатель
                 {
                     L = L / 2;
                     oldJ = tmpoldJ;
-                    int i = 0;
-                    listPeremens.ForEach((x) =>
-                        {
-                            if (x.getIfKategor())
-                            {
-                                x.getListKat().ForEach((y) => { y.setKoef(tmp[i]); i++; });
-                            }
-                            else
-                            {
-                                x.setKoef(tmp[i]); i++;
-                            }
-                        });
+                    for (int i = 0; i < allst.Count; i++)
+                    {
+                        allst[i].setKoef(tmp[i]);
+                    }
                     allst = getJnew(listPeremens, allst, leanvalues, out nowJ);
                     Console.WriteLine(iter +")"+nowJ + "\t" + L);
                 }

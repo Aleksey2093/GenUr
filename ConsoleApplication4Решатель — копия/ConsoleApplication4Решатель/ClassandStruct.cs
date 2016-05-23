@@ -8,29 +8,8 @@ namespace ConsoleApplication4Решатель
 {
     class KategorPeremen
     {
-        private double koef;
-        private double delta;
         private bool valueKat;
         private String nameKat;
-
-        public double getDelta()
-        {
-            return delta;
-        }
-
-        public void setDelta(double value)
-        {
-            delta = value;
-        }
-
-        public double getKoef()
-        {
-            return koef;
-        }
-        public void setKoef(double value)
-        {
-            koef = value;
-        }
 
         public String getName()
         {
@@ -48,18 +27,12 @@ namespace ConsoleApplication4Решатель
         {
             valueKat = value;
         }
-        public double getValueDouble(bool k)
+        public double getValueDouble()
         {
-            if (k)
-                if (valueKat)
-                    return 1*koef;
-                else
-                    return 0*koef;
+            if (valueKat)
+                return 1;
             else
-                if (valueKat)
-                    return 1;
-                else
-                    return 0;
+                return 0;
         }
     };
 
@@ -104,24 +77,6 @@ namespace ConsoleApplication4Решатель
         public double koef;
         public double delta;
 
-        public double getKoef()
-        {
-            return koef;
-        }
-        public double getDelta()
-        {
-            return delta;
-        }
-        public void setDelta(double value)
-        {
-            delta = value;
-        }
-
-        public void setKoef(double value)
-        {
-            koef = value;
-        }
-
         public void setName(String Name)
         {
             name = Name;
@@ -138,12 +93,9 @@ namespace ConsoleApplication4Решатель
         {
             valueDouble = value;
         }
-        public double getDouble(bool k)
+        public double getDouble()
         {
-            if (k)
-                return valueDouble * koef;
-            else
-                return valueDouble;
+            return valueDouble;
         }
         public void setIfKategor(bool what)
         {
@@ -161,7 +113,7 @@ namespace ConsoleApplication4Решатель
         {
             if (kategor == false)
                 return false;
-            for (int i = 0; i < kategorValue.Count; i++)
+            for (int i = 0; i < kategorValue.Count-1; i++)
             {
                 if (kategorValue[i].getName() == valuestr)
                     kategorValue[i].setValueBool(true);
@@ -226,61 +178,39 @@ namespace ConsoleApplication4Решатель
         public double getPrizvedenie(bool k)
         {
             double res = 1;
-            switch (stepengen)
+            if (k)
+                res = koef;
+            switch(stepengen)
             {
                 case 1:
                     if (number1 == -1)
-                    {
-                        res *= per1.getDouble(k);
-                    }
+                        res *= per1.getDouble();
                     else
-                    {
-                        res *= per1.kategorValue[number1].getValueDouble(k);
-                    }
+                        res *= per1.kategorValue[number1].getValueDouble();
                     break;
                 case 2:
                     if (number1 == -1)
-                    {
-                        res *= per1.getDouble(k);
-                    }
+                        res *= per1.getDouble();
                     else
-                    {
-                        res *= per1.kategorValue[number1].getValueDouble(k);
-                    }
+                        res *= per1.kategorValue[number1].getValueDouble();
                     if (number2 == -1)
-                    {
-                        res *= per2.getDouble(k);
-                    }
+                        res *= per2.getDouble();
                     else
-                    {
-                        res *= per2.kategorValue[number2].getValueDouble(k);
-                    }
+                        res *= per2.kategorValue[number2].getValueDouble();
                     break;
                 case 3:
                     if (number1 == -1)
-                    {
-                        res *= per1.getDouble(k);
-                    }
+                        res *= per1.getDouble();
                     else
-                    {
-                        res *= per1.kategorValue[number1].getValueDouble(k);
-                    }
+                        res *= per1.kategorValue[number1].getValueDouble();
                     if (number2 == -1)
-                    {
-                        res *= per2.getDouble(k);
-                    }
+                        res *= per2.getDouble();
                     else
-                    {
-                        res *= per2.kategorValue[number2].getValueDouble(k);
-                    }
+                        res *= per2.kategorValue[number2].getValueDouble();
                     if (number3 == -1)
-                    {
-                        res *= per3.getDouble(k);
-                    }
+                        res *= per3.getDouble();
                     else
-                    {
-                        res *= per3.kategorValue[number3].getValueDouble(k);
-                    }
+                        res *= per3.kategorValue[number3].getValueDouble();
                     break;
             }
             return res;

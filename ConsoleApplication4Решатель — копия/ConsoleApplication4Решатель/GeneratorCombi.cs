@@ -64,7 +64,7 @@ namespace ConsoleApplication4Решатель
                 Kombinacia k = new Kombinacia();
                 if (listPeremens[i].getIfKategor())
                 {
-                    for (int j = 0; j < listPeremens[i].getListKat().Count; j++)
+                    for (int j = 0; j < listPeremens[i].getListKat().Count-1; j++)
                     {
                         k = new Kombinacia();
                         k.setPeremens(1, listPeremens[i], null, null, j, -1, -1);
