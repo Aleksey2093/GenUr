@@ -74,5 +74,10 @@ namespace Решатель
             GeneratorВариантов gen = new GeneratorВариантов();
             gen.GeneratorVariantov(massiv_переменных);
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
