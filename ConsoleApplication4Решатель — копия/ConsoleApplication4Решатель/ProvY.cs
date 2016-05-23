@@ -28,11 +28,28 @@ namespace ConsoleApplication4Решатель
         {
             List<List<ValuePeremen>> list = new List<List<ValuePeremen>>();
             String[] lines = System.IO.File.ReadAllLines("test.csv");
-            for (int i = 0; i < lines.Length; i++)
+            for (int i = 0; i < /*lines.Length*/10; i++)
             {
-                String tmp = "";
+                //String tmp = "";
                 List<ValuePeremen> line = new List<ValuePeremen>();
-                for (int j = 0; j < lines[i].Length; j++)
+                List<String> strline = new List<string>(lines[i].Split(','));
+                strline.ForEach((x) => 
+                {
+                    ValuePeremen val = new ValuePeremen();
+                    double r = getDouble(x);
+                    if (r == -99999999)
+                    {
+                        val.setKategor(true);
+                        val.setValueKat(x);
+                    }
+                    else
+                    {
+                        val.setKategor(false);
+                        val.setDouble(r);
+                    }
+                    line.Add(val);
+                });
+                /*for (int j = 0; j < lines[i].Length; j++)
                 {
                     if (lines[i][j] != ',' && j != lines[i].Length - 1)
                         tmp += lines[i][j];
@@ -53,7 +70,7 @@ namespace ConsoleApplication4Решатель
                         line.Add(v);
                         tmp = "";
                     }
-                }
+                }*/
                 list.Add(line);
             }
             return list;

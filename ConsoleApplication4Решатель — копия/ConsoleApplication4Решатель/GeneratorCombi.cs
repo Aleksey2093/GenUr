@@ -64,7 +64,7 @@ namespace ConsoleApplication4Решатель
                 Kombinacia k = new Kombinacia();
                 if (listPeremens[i].getIfKategor())
                 {
-                    for (int j = 0; j < listPeremens[i].getListKat().Count-1; j++)
+                    for (int j = 0; j < listPeremens[i].getListKat().Count; j++)
                     {
                         k = new Kombinacia();
                         k.setPeremens(1, listPeremens[i], null, null, j, -1, -1);
@@ -87,13 +87,13 @@ namespace ConsoleApplication4Решатель
             {
                 if (listPeremens[i].getIfKategor())
                 {
-                    for (int j = 0; j < listPeremens[i].getListKat().Count - 1; j++)
+                    for (int j = 0; j < listPeremens[i].getListKat().Count; j++)
                     {
                         for (int k = i + 1; k < listPeremens.Count; k++) //цикл по второй переменной
                         {
                             if (listPeremens[k].getIfKategor())
                             {
-                                for (int l = 0; l < listPeremens[k].getListKat().Count - 1; l++)
+                                for (int l = 0; l < listPeremens[k].getListKat().Count; l++)
                                 {
                                     Kombinacia kombo = new Kombinacia();
                                     kombo.setPeremens(2, listPeremens[i], listPeremens[k], null, j, l, -1);
@@ -115,7 +115,7 @@ namespace ConsoleApplication4Решатель
                     {
                         if (listPeremens[j].getIfKategor())
                         {
-                            for (int p = 0; p < listPeremens[j].getListKat().Count - 1; p++)
+                            for (int p = 0; p < listPeremens[j].getListKat().Count; p++)
                             {
                                 Kombinacia k = new Kombinacia();
                                 k.setPeremens(2, listPeremens[i], listPeremens[j],
@@ -142,7 +142,7 @@ namespace ConsoleApplication4Решатель
             {
                 if (listPeremens[k].getIfKategor())
                 {
-                    for (int p = 0; p < listPeremens[k].getListKat().Count - 1; p++)
+                    for (int p = 0; p < listPeremens[k].getListKat().Count; p++)
                     {
                         Kombinacia kombo = new Kombinacia();
                         kombo.setPeremens(3, listPeremens[i], listPeremens[j], listPeremens[k],
@@ -168,7 +168,7 @@ namespace ConsoleApplication4Решатель
             {
                 if (listPeremens[j].getIfKategor())
                 {
-                    for (int k = 0; k < listPeremens[j].getListKat().Count - 1; k++)
+                    for (int k = 0; k < listPeremens[j].getListKat().Count; k++)
                         threestep.AddRange(getThreeStepenAdd3(listPeremens, i, j, j + 1, i1, k));
                 }
                 else
@@ -186,7 +186,7 @@ namespace ConsoleApplication4Решатель
             {
                 if (listPeremens[i].getIfKategor())
                 {
-                    for (int j = 0; j < listPeremens[i].getListKat().Count - 1; j++)
+                    for (int j = 0; j < listPeremens[i].getListKat().Count; j++)
                         threestep.AddRange(getThreeStepenAdd2(listPeremens, i, i + 1, j));
                 }
                 else

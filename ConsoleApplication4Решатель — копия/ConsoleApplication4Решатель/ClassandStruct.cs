@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace ConsoleApplication4Решатель
 {
+    /// <summary>
+    /// используется в переменной, если она категория
+    /// </summary>
     class KategorPeremen
     {
         private bool valueKat;
@@ -27,6 +30,11 @@ namespace ConsoleApplication4Решатель
         {
             valueKat = value;
         }
+
+        /// <summary>
+        /// возвращает 1, если категория верна или 0, если нет
+        /// </summary>
+        /// <returns></returns>
         public double getValueDouble()
         {
             if (valueKat)
@@ -36,6 +44,9 @@ namespace ConsoleApplication4Решатель
         }
     };
 
+    /// <summary>
+    /// переменные обучающего файла
+    /// </summary>
     class ValuePeremen
     {
         private bool boolkat;
@@ -68,15 +79,16 @@ namespace ConsoleApplication4Решатель
         }
     };
 
+    /// <summary>
+    /// переменные из которых состоят комбинации
+    /// </summary>
     class Peremennaya
     {
         public String name;
         public bool kategor;
         public double valueDouble;
         public List<KategorPeremen> kategorValue;
-        public double koef;
-        public double delta;
-
+        
         public void setName(String Name)
         {
             name = Name;
@@ -109,6 +121,11 @@ namespace ConsoleApplication4Решатель
         {
             return kategorValue;
         }
+        /// <summary>
+        /// устанавливает значение категории в соответствии с данными файла обучения
+        /// </summary>
+        /// <param name="valuestr">значение категории из файла обучения</param>
+        /// <returns></returns>
         public bool setValueKategor(String valuestr)
         {
             if (kategor == false)
@@ -126,8 +143,8 @@ namespace ConsoleApplication4Решатель
 
     class Kombinacia
     {
-        public double koef = 1;
-        public double delta = 0;
+        public double koef;
+        public double delta;
         public int stepengen = -1;
         public Peremennaya per1;
         public int number1 = -1;
@@ -136,6 +153,16 @@ namespace ConsoleApplication4Решатель
         public Peremennaya per3;
         public int number3 = -1;
 
+        /// <summary>
+        /// устснавливает значения комбинации
+        /// </summary>
+        /// <param name="st">степень</param>
+        /// <param name="p1">первая переменная</param>
+        /// <param name="p2">вторая переменная</param>
+        /// <param name="p3">третья переменная</param>
+        /// <param name="i">номер значения категории 1, если переменная 1 категория</param>
+        /// <param name="j">номер значения категории 2, если переменная 2 категория</param>
+        /// <param name="k">номер значения категории 3, если переменная 3 категория</param>
         public void setPeremens(int st, Peremennaya p1, Peremennaya p2, Peremennaya p3, int i, int j, int k)
         {
             stepengen = st;
@@ -175,6 +202,11 @@ namespace ConsoleApplication4Решатель
             return delta;
         }
 
+        /// <summary>
+        /// получает произведение категории
+        /// </summary>
+        /// <param name="k">если правда то в расчет включается коэффициент</param>
+        /// <returns></returns>
         public double getPrizvedenie(bool k)
         {
             double res = 1;
