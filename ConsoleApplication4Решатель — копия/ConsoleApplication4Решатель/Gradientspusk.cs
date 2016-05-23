@@ -60,7 +60,7 @@ namespace ConsoleApplication4Решатель
                 double tmpoldJ = oldJ;
                 oldJ = nowJ;
                 allst = getJnew(listPeremens, allst, leanvalues, out nowJ);
-                //err = oldJ * 0.00001;
+                err = oldJ * 0.00001;
                 if (Math.Abs(tmpoldJ - oldJ) < Math.Abs(oldJ - nowJ))
                 {
                     L = L / 2;
