@@ -69,6 +69,7 @@ namespace ConsoleApplication1
 
             XmlDocument doc = new XmlDocument();
             doc.Load("XMLFile1.xml");
+            int nlist = 0;
             foreach (XmlNode node in doc.DocumentElement)
             {
                 if (node.Name == "category")
@@ -88,6 +89,7 @@ namespace ConsoleApplication1
                     item.parse = int.Parse(tmp);
                     qqcatigoriyas.Add(item);
                 }
+                nlist++;
             }
             int catразмермаксимальный = 0;
             for (int i = 0; i < qqcatigoriyas.Count; i++)
@@ -95,7 +97,7 @@ namespace ConsoleApplication1
                     catразмермаксимальный = qqcatigoriyas[i].zn_value.Count;
             catразмермаксимальный += 1;
             String line = null; bool test_or_learn;
-            int nlist = 107, kolvotest = 300000, scet = 0;
+            int kolvotest = 300000, scet = 0;
 
             Console.WriteLine("-------------------------------");
             {
@@ -103,7 +105,7 @@ namespace ConsoleApplication1
             rколичествопеременных:
                 try
                 {
-                    nlist = int.Parse(Console.ReadLine());
+                    //nlist = int.Parse(Console.ReadLine());
                     nlist++;
                 }
                 catch (Exception)
@@ -286,7 +288,27 @@ namespace ConsoleApplication1
              * -------------------------
              * -------------------------
              */
-            double Y = 0;
+            double Y = X[1, 0] * X[15, 0]
+                + X[2, 0] * X[19, 0]
+                + 2 * X[3, 2] * X[16, 0]
+                + 2 * X[7, 0] * X[18, 0]
+                + X[5, 2] * X[13, 0]
+                + X[6, 1] * X[7, 0]
+                + X[6, 2] * X[19, 0]
+                + 3 * X[8, 1] * X[18, 0]
+                + 3 * X[8, 2] * X[20, 0]
+                + X[8, 1] * X[10, 0]
+                + 2 * X[9, 0] * X[16, 0]
+                + X[11, 0] * X[6, 1]
+                + X[8, 2] * X[4, 0]
+                + 2 * X[13, 0] * X[5, 1]
+                + 3 * X[14, 0] * X[12, 0]
+                + X[20, 0] * X[5, 2]
+                + X[15, 0] * X[6, 1]
+                + X[6, 2] * X[17, 0]
+                + X[7, 0] * X[20, 0]
+                + 2 * X[18, 0] * X[3, 1]
+                + 2 * X[19, 0] * X[8, 2];
             random = new Random(DateTime.Now.Millisecond);
             //Console.WriteLine("!!!!!!!!!!!\t"+ rand +"\tY = " + Y);
             double rrr = 0;

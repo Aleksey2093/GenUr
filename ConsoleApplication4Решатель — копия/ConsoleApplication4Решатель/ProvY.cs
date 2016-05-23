@@ -7,20 +7,19 @@ namespace ConsoleApplication4Решатель
 {
     class ProvY
     {
-        private double getDouble(string tmp)
+        private bool getDouble(string tmp, out double res)
         {
-            double res = new double();
             if (double.TryParse(tmp, out res))
-                return res;
+                return true;
             else if (double.TryParse(tmp.Replace(",", "."), out res))
-                return res;
+                return true;
             else if (double.TryParse(tmp.Replace(".", ","), out res))
-                return res;
+                return true;
             else
             {
                 //MessageBox.Show("Ошибка преобразования числового значения из файла обучения. Возможно в файле ошибка.", 
                 //    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                return -99999999;
+                return false;
             }
         }
 
@@ -36,8 +35,8 @@ namespace ConsoleApplication4Решатель
                 strline.ForEach((x) => 
                 {
                     ValuePeremen val = new ValuePeremen();
-                    double r = getDouble(x);
-                    if (r == -99999999)
+                    double r;
+                    if (getDouble(x,out r) == false)
                     {
                         val.setKategor(true);
                         val.setValueKat(x);
@@ -82,9 +81,10 @@ namespace ConsoleApplication4Решатель
             testvalue = getLeanValueFromFile();
             List<double> restest = new List<double>();
             Console.WriteLine("------------------res Y:");
+            int j;
             for (int i=0;i<testvalue.Count;i++)
             {
-                for (int j=0;j<listPeremens.Count;j++)
+                for (j=0;j<listPeremens.Count;j++)
                 {
                     if (listPeremens[j].getIfKategor())
                         listPeremens[j].setValueKategor(testvalue[i][j].getValueKat());
@@ -92,11 +92,11 @@ namespace ConsoleApplication4Решатель
                         listPeremens[j].setDouble(testvalue[i][j].getDouble());
                 }
                 double Y = 0;
-                for (int j=0;j<allst.Count;j++)
+                for (j=0;j<allst.Count;j++)
                 {
                     Y += allst[j].getPrizvedenie(true);
                 }
-                Console.WriteLine(Y);
+                Console.WriteLine(Y + " - " +testvalue[i][listPeremens.Count].getDouble() + " = " + Math.Abs(Y - testvalue[i][listPeremens.Count].getDouble()));
             }
         }
     }

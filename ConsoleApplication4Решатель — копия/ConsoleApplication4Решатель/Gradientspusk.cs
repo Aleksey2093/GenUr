@@ -8,9 +8,42 @@ namespace ConsoleApplication4Решатель
 {
     class Gradientspusk
     {
-        List<Kombinacia> getJnew(List<Peremennaya> listPeremens, List<Kombinacia> allst, List<List<ValuePeremen>> leanvalues, out double J)
+        private double[][] proiz;
+        private double[] ylearn;
+        private double[] delta;
+        private double[] koef;
+        private double[] oldkoef;
+
+        private void setmass(List<Peremennaya> listPeremens, List<Kombinacia> allst, List<List<ValuePeremen>> leanvalues)
         {
-            double /*J = 0, */Y; int /*len = leanvalues[0].Count - 1,*/ j;
+            proiz = new double[leanvalues.Count][];
+            ylearn = new double[leanvalues.Count];
+            delta = new double[allst.Count];
+            koef = new double[allst.Count];
+            oldkoef = new double[allst.Count];
+            for (int i=0;i<leanvalues.Count;i++)
+            {
+                int j;
+                proiz[i] = new double[allst.Count];
+                for (j = 0; j < listPeremens.Count; j++)
+                    if (listPeremens[j].getIfKategor())
+                        listPeremens[j].setValueKategor(leanvalues[i][j].getValueKat());
+                    else
+                        listPeremens[j].setDouble(leanvalues[i][j].getDouble());
+                ylearn[i] = leanvalues[i][j].getDouble();
+                for (j = 0; j < allst.Count; j++)
+                    proiz[i][j] = allst[j].getPrizvedenie(false);
+            }
+            for (int i=0;i<allst.Count;i++)
+            {
+                delta[i] = 0;
+                koef[i] = 0;
+                oldkoef[i] = 0;
+            }
+        }
+        private List<Kombinacia> getJnewOld(List<Peremennaya> listPeremens, List<Kombinacia> allst, List<List<ValuePeremen>> leanvalues, out double J)
+        {
+            double Y; int j;
             J = 0;
             allst.ForEach((x) => { x.setDelta(0); });
             for (int i = 0; i < leanvalues.Count; i++) //верхний цикл циферкам для обучения
@@ -32,51 +65,81 @@ namespace ConsoleApplication4Решатель
             return allst;
         }
 
+        private double getJnew()
+        {
+            double J = 0; double onemi = 1.0 / proiz.Length, omni2 = onemi / 2;
+            //for (int i = 0; i < delta.Length; i++)
+            Parallel.For(0, delta.Length, (i, state) =>
+                {
+                    delta[i] = 0;
+                });
+            for (int i = 0; i < proiz.Length; i++)
+            //Parallel.For(0,proiz.Length,(i,state)=>
+            {
+                double Y = 0;
+                for (int j = 0; j < proiz[i].Length; j++)
+                    Y += proiz[i][j] * koef[j];
+                double tm = (Y - ylearn[i]), onemi_tm = onemi * tm;
+                J += (omni2) * tm * tm;
+                //for (int j=0;j<delta.Length;j++)
+                Parallel.For(0,delta.Length,(j,state)=>
+                {
+                    delta[j] += onemi_tm * proiz[i][j];
+                });
+            }//);
+            return J;
+        }
+
         public List<Kombinacia> runGradientspusk(List<Peremennaya> listPeremens, List<Kombinacia> allst, List<List<ValuePeremen>> leanvalues)
         {
-            if (leanvalues.Count > 10000)
-                leanvalues = new List<List<ValuePeremen>>(leanvalues.GetRange(0, 3000));
-            Parallel.For(0, allst.Count, (i, state) => { allst[i].setKoef(0); allst[i].setDelta(0); });
+            //if (leanvalues.Count > 10000)
+            //    leanvalues = new List<List<ValuePeremen>>(leanvalues.GetRange(0, 10000));
+            setmass(listPeremens, allst, leanvalues);
             Console.WriteLine("Start graddown");
-            double err = 1, L = 0.0001;
+            double err = 1, L = 0.00000001;
             double nowJ = 0, oldJ = 0;
-            allst = getJnew(listPeremens, allst, leanvalues, out nowJ);
+            nowJ = getJnew();
             oldJ = 0;
-            /*List<double> tmp = new List<double>();
-            for (int i = 0; i < allst.Count; i++)
-            {
-                tmp.Add(0);
-            }*/
-            int iter = 0;
-            double[] tmp = new double[allst.Count];
+            int iter = 0, olditer = 0;
+            int m = allst.Count;
+            DateTime end, start = DateTime.Now;
+            Console.WriteLine("time start: " + DateTime.Now);
             while (Math.Abs(oldJ - nowJ) > err)
             {
                 iter++;
-                for (int i = 0; i < allst.Count; i++)
+                oldkoef = (double[])koef.Clone();
+                //for (int i = 0; i < allst.Count; i++)
+                Parallel.For(0,m,(i,state)=>
                 {
-                    tmp[i] = (allst[i].getKoef());
-                    allst[i].setKoef(allst[i].getKoef() - (L * allst[i].getDelta()));
-                }
+                    koef[i] -= (L * delta[i]);
+                });
                 double tmpoldJ = oldJ;
                 oldJ = nowJ;
-                allst = getJnew(listPeremens, allst, leanvalues, out nowJ);
-                err = oldJ * 0.00001;
+                nowJ = getJnew();
+                err = oldJ * 0.000001;
                 if (Math.Abs(tmpoldJ - oldJ) < Math.Abs(oldJ - nowJ))
                 {
                     L = L / 2;
                     oldJ = tmpoldJ;
-                    for (int i = 0; i < allst.Count; i++)
-                    {
-                        allst[i].setKoef(tmp[i]);
-                    }
-                    allst = getJnew(listPeremens, allst, leanvalues, out nowJ);
-                    Console.WriteLine(iter +")"+nowJ + "\t" + L);
+                    koef = (double[])oldkoef.Clone();
+                    nowJ = getJnew();
                 }
                 else
                 {
                     L = L * 2;
-                    Console.WriteLine(iter + ")" +nowJ + "\t" + L);
                 }
+                if (iter - olditer == 500)
+                {
+                    olditer = iter;
+                    Console.WriteLine(iter + ")" + nowJ + "\t" + L + "\t time: " + (DateTime.Now - start));
+                }
+            }
+            end = DateTime.Now;
+            Console.WriteLine(iter + ")" + nowJ + "\t" + L);
+            Console.WriteLine("time end: " + end + "\n time while: " + (end-start));
+            for (int i = 0; i<allst.Count; i++)
+            {
+                allst[i].setKoef(koef[i]);
             }
             return allst;
         }
