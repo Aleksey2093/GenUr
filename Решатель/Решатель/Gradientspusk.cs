@@ -104,7 +104,7 @@ namespace Решатель
                leanvalues = new List<List<ValuePeremen>>(leanvalues.GetRange(0, 10000));
             setmass(listPeremens, allst, leanvalues);
             Console.WriteLine("Start graddown");
-            double err = 1, L = 0.0001;
+            double err = 0.001, L = 0.0000001;
             double nowJ = 0, oldJ = 0;
             nowJ = getJnew();
             oldJ = 0;
@@ -124,7 +124,7 @@ namespace Решатель
                 double tmpoldJ = oldJ;
                 oldJ = nowJ;
                 nowJ = getJnew();
-                err = oldJ * 0.00001;
+                //err = oldJ * 0.00001;
                 if (Math.Abs(tmpoldJ - oldJ) < Math.Abs(oldJ - nowJ))
                 {
                     L = L / 10;
@@ -134,7 +134,7 @@ namespace Решатель
                 }
                 else
                 {
-                    L = L * 2;
+                    //L = L * 2;
                 }
                 if (iter - olditer == 500)
                 {
