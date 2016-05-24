@@ -59,6 +59,7 @@ namespace Решатель
 
         private void button2Gradient_Click(object sender, EventArgs e)
         {
+            richTextBox1.Text = "";
             Thread th = new Thread(delegate()
             {
                 if (listPeremens.Count == 0)
@@ -88,6 +89,11 @@ namespace Решатель
             });
             th.Name = "Градиентный спукс";
             th.Start();
+        }
+
+        public void setIterData(int iter, double nowJ, double L, TimeSpan t)
+        {
+            Invoke(new MethodInvoker(() => { richTextBox1.Text += iter + ")" + nowJ + "\t" + L + "\t time: " + t + "\n"; }));
         }
 
         private void button1Prov_Click(object sender, EventArgs e)
