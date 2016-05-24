@@ -48,10 +48,10 @@ namespace Решатель
                 oldkoef[i] = 0;
             }
         }
-
+        double eps = 0.00000000001, L = 0.0000001;
         private double getJnew()
         {
-            double J = 0; double onemi = (double)1.0 / (double)proiz.Length, omni2 = onemi / (double)2;
+            double J = 0; double onemi = (double)1 / (double)proiz.Length, omni2 = onemi / (double)2;
             for (int i = 0; i < delta.Length; i++)
             {
                 delta[i] = 0;
@@ -77,7 +77,6 @@ namespace Решатель
             int cper = listPeremens.Count, stcount = allst.Count, leancount = leanvalues.Count;
             setmass(listPeremens, allst, leanvalues, cper, stcount, leancount);
             Console.WriteLine("Start graddown");
-            double eps = 0.00000000001, L = 0.0000001;
             double nowJ = 0, oldJ = 0;
             nowJ = getJnew();
             int iter = 0, olditer = 0;
