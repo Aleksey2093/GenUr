@@ -61,14 +61,52 @@ namespace ConsoleApplication1
             public List<int> zn_value;
         };
 
+        private static string getFile()
+        {
+            String[] filenames = System.IO.Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.xml");
+            int file_index = -1;
+            Console.WriteLine("---------------------");
+        reti:
+            Console.WriteLine("Выберите файл введя его номер из списка:");
+            for (int i = 0; i < filenames.Length - 1; i++)
+                Console.WriteLine((i + 1) + ": " + filenames[i] + ";");
+            Console.WriteLine(filenames.Length + ": " + filenames[filenames.Length - 1] + ".");
+            String str = Console.ReadLine();
+            if (int.TryParse(str, out file_index))
+            {
+                file_index--;
+                if (file_index > 0 && file_index < filenames.Length)
+                {
+                    Console.WriteLine("Введенное число не соответствует ни одному номеру из списка. Повторите выбор, если вы забили сгенировать файл, то введите '-exit', чтобы вернуться в основное меню");
+                    goto reti;
+                }
+            }
+            else if (Object.Equals(str, "-exit") || Object.Equals(str, "-выход"))
+            {
+                Console.WriteLine("Возврат в главное меню");
+                return null;
+            }
+            else
+            {
+                Console.WriteLine("Вы ввели совершенно что-то непонятное");
+                goto reti;
+            }
+            Console.WriteLine("---------------------");
+            Console.WriteLine("Файл - " + filenames[file_index] + ". Запущена обработка первой линии.");
+            return filenames[file_index];
+        }
+
         private static void getTestFile()
         {
             //double Y = 0;
             List<cattigor> qqcatigoriyas = new List<cattigor>();
             Random random = new Random();
-
+            String wadawd = getFile();
+            if (wadawd == null || wadawd == "")
+                return;
             XmlDocument doc = new XmlDocument();
-            doc.Load("XMLFile1.xml");
+            doc.Load(wadawd);
+            //doc.Load("XMLFile1.xml");
             int nlist = 0;
             foreach (XmlNode node in doc.DocumentElement)
             {
@@ -171,8 +209,8 @@ namespace ConsoleApplication1
 
                 for (int i = st; i < en; i++)
                 {
-                    double[,] X = new double[nlist, catразмермаксимальный];
-                    double Y = getTestFileNumberllll(i + 10, ref X, ref nlist, ref qqcatigoriyas, ref test_or_learn, ref catразмермаксимальный);
+                    double[,] X = new double[nlist, catразмермаксимальный+1];
+                    double Y = getTestFileNumberllll(i + 10, ref X, ref nlist, ref qqcatigoriyas, ref test_or_learn, catразмермаксимальный+1);
                     line = null; int kiti = 0;
                     for (int j = 1; j < nlist; j++)
                     {
@@ -242,7 +280,7 @@ namespace ConsoleApplication1
 
 
 
-        private static double getTestFileNumberllll(int rand, ref double[,] X, ref int nlist, ref List<cattigor> qqcatigoriyas, ref bool test_or_learn, ref int catразмермаксимальный)
+        private static double getTestFileNumberllll(int rand, ref double[,] X, ref int nlist, ref List<cattigor> qqcatigoriyas, ref bool test_or_learn, int catразмермаксимальный)
         {
             int randf = rand;
             if (randf > 100)
@@ -288,7 +326,7 @@ namespace ConsoleApplication1
              * -------------------------
              * -------------------------
              */
-            double Y = X[1, 0] * X[15, 0]
+            double Y = X[1, 0] + X[2, 0] + X[3, 0];/*X[1, 0] * X[15, 0]
                 + X[2, 0] * X[19, 0]
                 + 2 * X[3, 2] * X[16, 0]
                 + 2 * X[7, 0] * X[18, 0]
@@ -308,7 +346,7 @@ namespace ConsoleApplication1
                 + X[6, 2] * X[17, 0]
                 + X[7, 0] * X[20, 0]
                 + 2 * X[18, 0] * X[3, 1]
-                + 2 * X[19, 0] * X[8, 2];
+                + 2 * X[19, 0] * X[8, 2];*/
             random = new Random(DateTime.Now.Millisecond);
             //Console.WriteLine("!!!!!!!!!!!\t"+ rand +"\tY = " + Y);
             double rrr = 0;
