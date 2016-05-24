@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
-namespace ConsoleApplication4Решатель
+namespace Решатель
 {
     class ProvY
     {
@@ -23,10 +24,27 @@ namespace ConsoleApplication4Решатель
             }
         }
 
+        private String getPathLeanFile()
+        {
+            OpenFileDialog op = new OpenFileDialog();
+            op.Title = "Открыть файл с тестовым набором";
+            op.ShowDialog();
+
+            return op.FileName;
+        }
+
         private List<List<ValuePeremen>> getLeanValueFromFile()
         {
             List<List<ValuePeremen>> list = new List<List<ValuePeremen>>();
-            String[] lines = System.IO.File.ReadAllLines("test.csv");
+            String[] lines;
+            try
+            {
+                lines = System.IO.File.ReadAllLines(getPathLeanFile());
+            }
+            catch (Exception ex)
+            {
+                return list;
+            }
             for (int i = 0; i < lines.Length; i++)
             {
                 List<ValuePeremen> line = new List<ValuePeremen>();
@@ -52,11 +70,11 @@ namespace ConsoleApplication4Решатель
             return list;
         }
 
-        public void runProv(List<Peremennaya> listPeremens, List<Kombinacia> allst)
+        public List<List<double>> runProv(List<Peremennaya> listPeremens, List<Kombinacia> allst)
         {
             List<List<ValuePeremen>> testvalue = new List<List<ValuePeremen>>();
+            List<List<double>> res = new List<List<double>>();
             testvalue = getLeanValueFromFile();
-            List<double> restest = new List<double>();
             Console.WriteLine("------------------res Y:");
             int j;
             for (int i=0;i<testvalue.Count;i++)
@@ -73,8 +91,17 @@ namespace ConsoleApplication4Решатель
                 {
                     Y += allst[j].getPrizvedenie(true);
                 }
+                List<double> temp = new List<double>();
+                temp.Add(Y);
+                if (listPeremens.Count == testvalue[i].Count - 1)
+                {
+                    temp.Add(testvalue[i][listPeremens.Count].getDouble());
+                    temp.Add(Math.Abs(Y - testvalue[i][listPeremens.Count].getDouble()));
+                }
+                res.Add(temp);
                 Console.WriteLine(Y + " - " +testvalue[i][listPeremens.Count].getDouble() + " = " + Math.Abs(Y - testvalue[i][listPeremens.Count].getDouble()));
             }
+            return res;
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApplication4Решатель
+namespace Решатель
 {
     class Gradientspusk
     {
@@ -51,10 +51,10 @@ namespace ConsoleApplication4Решатель
                 Y = 0;
                 for (j = 0; j < listPeremens.Count; j++)
                 {
-                    if (listPeremens[j].kategor)
+                    if (listPeremens[j].getIfKategor())
                         listPeremens[j].setValueKategor(leanvalues[i][j].getValueKat());
                     else
-                        listPeremens[j].valueDouble = (leanvalues[i][j].getDouble());
+                        listPeremens[j].setDouble((leanvalues[i][j].getDouble()));
                 }
                 allst.ForEach((x) => { Y += x.getPrizvedenie(true); });
                 double tm = (Y - leanvalues[i][j].getDouble()),
@@ -68,11 +68,11 @@ namespace ConsoleApplication4Решатель
         private double getJnew()
         {
             double J = 0; double onemi = 1.0 / proiz.Length, omni2 = onemi / 2;
-            //for (int i = 0; i < delta.Length; i++)
-            Parallel.For(0, delta.Length, (i, state) =>
+            for (int i = 0; i < delta.Length; i++)
+            //Parallel.For(0, delta.Length, (i, state) =>
                 {
                     delta[i] = 0;
-                });
+                }//);
             for (int i = 0; i < proiz.Length; i++)
             //Parallel.For(0,proiz.Length,(i,state)=>
             {
@@ -81,11 +81,11 @@ namespace ConsoleApplication4Решатель
                     Y += proiz[i][j] * koef[j];
                 double tm = (Y - ylearn[i]), onemi_tm = onemi * tm;
                 J += (omni2) * tm * tm;
-                //for (int j=0;j<delta.Length;j++)
-                Parallel.For(0,delta.Length,(j,state)=>
+                for (int j=0;j<delta.Length;j++)
+                //Parallel.For(0,delta.Length,(j,state)=>
                 {
                     delta[j] += onemi_tm * proiz[i][j];
-                });
+                }//);
             }//);
             return J;
         }
@@ -96,7 +96,7 @@ namespace ConsoleApplication4Решатель
                leanvalues = new List<List<ValuePeremen>>(leanvalues.GetRange(0, 10000));
             setmass(listPeremens, allst, leanvalues);
             Console.WriteLine("Start graddown");
-            double err = 1, L = 0.00000001;
+            double err = 1, L = 0.0001;
             double nowJ = 0, oldJ = 0;
             nowJ = getJnew();
             oldJ = 0;
@@ -108,15 +108,15 @@ namespace ConsoleApplication4Решатель
             {
                 iter++;
                 oldkoef = (double[])koef.Clone();
-                //for (int i = 0; i < allst.Count; i++)
-                Parallel.For(0,m,(i,state)=>
+                for (int i = 0; i < allst.Count; i++)
+                //Parallel.For(0,m,(i,state)=>
                 {
                     koef[i] -= (L * delta[i]);
-                });
+                }//);
                 double tmpoldJ = oldJ;
                 oldJ = nowJ;
                 nowJ = getJnew();
-                err = oldJ * 0.000001;
+                err = oldJ * 0.00001;
                 if (Math.Abs(tmpoldJ - oldJ) < Math.Abs(oldJ - nowJ))
                 {
                     L = L / 2;
