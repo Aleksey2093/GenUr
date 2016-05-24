@@ -127,7 +127,7 @@ namespace Решатель
                 err = oldJ * 0.00001;
                 if (Math.Abs(tmpoldJ - oldJ) < Math.Abs(oldJ - nowJ))
                 {
-                    L = L / 2;
+                    L = L / 10;
                     oldJ = tmpoldJ;
                     koef = (double[])oldkoef.Clone();
                     nowJ = getJnew();
