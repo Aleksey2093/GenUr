@@ -70,7 +70,7 @@ namespace Решатель
             return list;
         }
 
-        public List<List<double>> runProv(List<Peremennaya> listPeremens, List<Kombinacia> allst)
+        public List<List<double>> runProv(List<Peremennaya> listPeremens, List<Kombinacia> allst, double[] koef)
         {
             List<List<ValuePeremen>> testvalue = new List<List<ValuePeremen>>();
             List<List<double>> res = new List<List<double>>();
@@ -89,7 +89,7 @@ namespace Решатель
                 double Y = 0;
                 for (j=0;j<allst.Count;j++)
                 {
-                    Y += allst[j].getPrizvedenie(true);
+                    Y += allst[j].getPrizvedenie() * koef[j];
                 }
                 List<double> temp = new List<double>();
                 temp.Add(Y);

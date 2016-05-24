@@ -10,6 +10,11 @@ namespace Решатель
 {
     class GeneratorCombi
     {
+        private MainWindow mainWindow;
+        public GeneratorCombi(MainWindow mainWindow)
+        {
+            this.mainWindow = mainWindow;
+        }
         private Peremennaya addNewPer(string name)
         {
             Peremennaya p = new Peremennaya();
@@ -36,7 +41,6 @@ namespace Решатель
         {
             List<Peremennaya> massiv_переменных = new List<Peremennaya>();
             Peremennaya per = new Peremennaya();
-            //string path = "vars.xml";
             XmlDocument doc = new XmlDocument();
             doc.Load(path);
             int i = 0;
@@ -208,29 +212,28 @@ namespace Решатель
             allst.AddRange(onest);
             allst.AddRange(twost);
             allst.AddRange(threst);
-            List<List<ValuePeremen>> leanvalues = getLeanValueFromFile();
-            if (leanvalues.Count == 0)
-                return null;
-            Gradientspusk grad = new Gradientspusk();
-            List<Kombinacia> res = grad.runGradientspusk(listPeremens, allst, leanvalues);
-            ProvY prov = new ProvY();
+            //List<List<ValuePeremen>> leanvalues = getLeanValueFromFile();
+            //if (leanvalues.Count == 0)
+            //    return null;
+            //Gradientspusk grad = new Gradientspusk();
+            //List<Kombinacia> res = grad.runGradientspusk(listPeremens, allst, leanvalues);
+            //ProvY prov = new ProvY();
             //prov.runProv(listPeremens, allst);
             return allst;
         }
 
-        private String getPathLeanFile()
-        {
-            OpenFileDialog op = new OpenFileDialog();
-            op.Title = "Открыть файл с обучающим набором";
-            op.ShowDialog();
-
-            return op.FileName;
-        }
-
-        private List<List<ValuePeremen>> getLeanValueFromFile()
+        public List<List<ValuePeremen>> getLeanValueFromFile(String path)
         {
             List<List<ValuePeremen>> list = new List<List<ValuePeremen>>();
-            String[] lines = System.IO.File.ReadAllLines(getPathLeanFile());
+            String[] lines;
+            try
+            {
+                lines = System.IO.File.ReadAllLines(path);
+            }
+            catch (Exception ex)
+            {
+                return list;
+            }
             for (int i = 0; i < lines.Length; i++)
             {
                 List<ValuePeremen> line = new List<ValuePeremen>();

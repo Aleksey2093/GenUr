@@ -8,11 +8,18 @@ namespace Решатель
 {
     class Gradientspusk
     {
+
         private double[][] proiz;
         private double[] ylearn;
         private double[] delta;
         private double[] koef;
         private double[] oldkoef;
+        private MainWindow mainWindow;
+
+        public Gradientspusk(MainWindow mainWindow)
+        {
+            this.mainWindow = mainWindow;
+        }
 
         private void setmass(List<Peremennaya> listPeremens, List<Kombinacia> allst, List<List<ValuePeremen>> leanvalues)
         {
@@ -32,7 +39,7 @@ namespace Решатель
                         listPeremens[j].setDouble(leanvalues[i][j].getDouble());
                 ylearn[i] = leanvalues[i][j].getDouble();
                 for (j = 0; j < allst.Count; j++)
-                    proiz[i][j] = allst[j].getPrizvedenie(false);
+                    proiz[i][j] = allst[j].getPrizvedenie();
             }
             for (int i=0;i<allst.Count;i++)
             {
@@ -41,7 +48,7 @@ namespace Решатель
                 oldkoef[i] = 0;
             }
         }
-        private List<Kombinacia> getJnewOld(List<Peremennaya> listPeremens, List<Kombinacia> allst, List<List<ValuePeremen>> leanvalues, out double J)
+        /*private List<Kombinacia> getJnewOld(List<Peremennaya> listPeremens, List<Kombinacia> allst, List<List<ValuePeremen>> leanvalues, out double J)
         {
             double Y; int j;
             J = 0;
@@ -56,14 +63,14 @@ namespace Решатель
                     else
                         listPeremens[j].setDouble((leanvalues[i][j].getDouble()));
                 }
-                allst.ForEach((x) => { Y += x.getPrizvedenie(true); });
+                allst.ForEach((x) => { Y += x.getPrizvedenie(); });
                 double tm = (Y - leanvalues[i][j].getDouble()),
                     oneminuslen = 1.0 / (double)leanvalues.Count;
                 J += (oneminuslen / 2.0) * tm * tm;
-                allst.ForEach((x) => { double del = oneminuslen * tm * x.getPrizvedenie(false); x.setDelta(del); });
+                allst.ForEach((x) => { double del = oneminuslen * tm * x.getPrizvedenie(); x.setDelta(del); });
             }
             return allst;
-        }
+        }*/
 
         private double getJnew()
         {
@@ -76,12 +83,13 @@ namespace Решатель
             for (int i = 0; i < proiz.Length; i++)
             //Parallel.For(0,proiz.Length,(i,state)=>
             {
-                double Y = 0;
-                for (int j = 0; j < proiz[i].Length; j++)
+                double Y = 0;int j;
+                for (j = 0; j < proiz[i].Length; j++)
                     Y += proiz[i][j] * koef[j];
+                //Y += koef[j];
                 double tm = (Y - ylearn[i]), onemi_tm = onemi * tm;
                 J += (omni2) * tm * tm;
-                for (int j=0;j<delta.Length;j++)
+                for (j=0;j<delta.Length;j++)
                 //Parallel.For(0,delta.Length,(j,state)=>
                 {
                     delta[j] += onemi_tm * proiz[i][j];
@@ -90,7 +98,7 @@ namespace Решатель
             return J;
         }
 
-        public List<Kombinacia> runGradientspusk(List<Peremennaya> listPeremens, List<Kombinacia> allst, List<List<ValuePeremen>> leanvalues)
+        public double[] runGradientspusk(List<Peremennaya> listPeremens, List<Kombinacia> allst, List<List<ValuePeremen>> leanvalues)
         {
             if (leanvalues.Count > 10000)
                leanvalues = new List<List<ValuePeremen>>(leanvalues.GetRange(0, 10000));
@@ -137,11 +145,7 @@ namespace Решатель
             end = DateTime.Now;
             Console.WriteLine(iter + ")" + nowJ + "\t" + L);
             Console.WriteLine("time end: " + end + "\n time while: " + (end-start));
-            for (int i = 0; i<allst.Count; i++)
-            {
-                allst[i].setKoef(koef[i]);
-            }
-            return allst;
+            return koef;
         }
 
 

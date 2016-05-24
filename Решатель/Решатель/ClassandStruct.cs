@@ -143,8 +143,6 @@ namespace Решатель
 
     class Kombinacia
     {
-        private double koef;
-        private double delta;
         private int stepengen = -1;
         private Peremennaya per1;
         private int number1 = -1;
@@ -182,38 +180,15 @@ namespace Решатель
                 }
             }
         }
-        public void setKoef(double value)
-        {
-            koef = value;
-        }
-
-        public void setDelta(double value)
-        {
-            delta = value;
-        }
-
-        public double getKoef()
-        {
-            return koef;
-        }
-
-        public double getDelta()
-        {
-            return delta;
-        }
 
         /// <summary>
         /// получает произведение категории
         /// </summary>
         /// <param name="k">если правда то в расчет включается коэффициент</param>
         /// <returns></returns>
-        public double getPrizvedenie(bool k)
+        public double getPrizvedenie()
         {
-            double res;
-            if (k)
-                res = koef;
-            else
-                res = 1;
+            double res = 1;
             switch(stepengen)
             {
                 case 1:
