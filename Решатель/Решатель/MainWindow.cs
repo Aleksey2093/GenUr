@@ -24,22 +24,17 @@ namespace Решатель
 
         private void button1xml_Click(object sender, EventArgs e)
         {
-            OpenFileDialog open = new OpenFileDialog();
-            DialogResult r = open.ShowDialog();
-            if (r != System.Windows.Forms.DialogResult.OK)
-                return;
-            treeView1.Nodes.Clear();
-            listPeremens = new GeneratorCombi(this).getPeremens(open.FileName);
             int index = 0;
-            foreach(var i in listPeremens)
+            listPeremens = new Fileload().getXML();
+            if (listPeremens == null || listPeremens.Count == 0)
+                return;
+            foreach(var per in listPeremens)
             {
-                treeView1.Nodes.Add(i.getName());
-                if (i.getIfKategor())
+                treeView1.Nodes.Add(per.Name);
+                if (per.IfKategori)
                 {
-                    foreach (var j in i.getListKat())
-                    {
-                        treeView1.Nodes[index].Nodes.Add(j.getName());
-                    }
+                    for (int i = 0; i < per.getCountKat(); i++)
+                        treeView1.Nodes[index].Nodes.Add(per.getListCatNames(i));
                 }
                 index++;
             }
@@ -57,43 +52,57 @@ namespace Решатель
                 return "";
         }
 
+        /// <summary>
+        /// проверка массива произведений и Y(из файла) на корректность
+        /// </summary>
+        /// <param name="proiz">массив произведений</param>
+        /// <param name="ylean">массив Y из файла</param>
+        /// <param name="learncout">длинна обоих массивов</param>
+        /// <param name="rowlen">длинна одной строки массива произведений</param>
+        /// <returns></returns>
+        private bool provPrizAndYlean(double[][] proiz, double[] ylean, int learncout, int rowlen)
+        {
+            if (ylean.Length != learncout)
+                return false;
+            if (proiz.Length != learncout)
+                return false;
+            for (int i=0;i<proiz.Length;i++)
+            {
+                if (proiz[i].Length != rowlen)
+                    return false;
+            }
+            return true;
+        }
+
         private void button2Gradient_Click(object sender, EventArgs e)
         {
             richTextBox1.Text = "";
-            Thread th = new Thread(delegate()
+            if (listPeremens == null || listPeremens.Count == 0)
             {
-                if (listPeremens.Count == 0)
-                    return;
-                GeneratorCombi gen = new GeneratorCombi(this);
-                resUr = gen.GeneratorVars(listPeremens);
-                if (resUr == null || resUr.Count == 0)
-                    return;
-                List<List<ValuePeremen>> leanvals = new List<List<ValuePeremen>>();
-                String path = getPathLeanFile();
-                if (path == "")
-                    return;
-                leanvals = gen.getLeanValueFromFile(path);
-                if (leanvals == null || leanvals.Count == 0)
-                    return;
-                Gradientspusk grad = new Gradientspusk(this);
-                koef = grad.runGradientspusk(listPeremens, resUr, leanvals);
-                Invoke(new MethodInvoker(() =>
-                {
-                    richTextBox2.Text = "";
-                    //resUr.ForEach((x) => { richTextBox2.Text += x.getKoef(); richTextBox2.Text += "\t"; });
-                    foreach (var x in koef)
-                    {
-                        richTextBox2.Text += x + "\t";
-                    }
-                }));
-            });
-            th.Name = "Градиентный спукс";
-            th.Start();
+                MessageBox.Show("Загрузите файл с переменными","", MessageBoxButtons.OK, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1);
+                return;
+            }
+            GeneratorКомбинаций genkombi = new GeneratorКомбинаций(listPeremens);
+            List<Kombinacia> allstkombo = genkombi.runGen();
+            Fileload file = new Fileload();
+            List<List<ValueFile>> learn = file.getDataFile();
+            Proiz classProiz = new Proiz();
+            double[][] proiz;
+            double[] ylean;
+            classProiz.getProiz(listPeremens,allstkombo,learn,out proiz,out ylean);
+            if (provPrizAndYlean(proiz, ylean, learn.Count, allstkombo.Count + 1) == false)
+                return;
+            double eps = 1.0000, la = 0.000001;
+            GradientСпуск grad = new GradientСпуск(proiz,ylean,eps,la,allstkombo.Count+1);
+            koef = grad.runGradientСпуск();
+            resUr = allstkombo;
+            foreach (var i in koef)
+                richTextBox2.Text += i + "\t";
         }
 
         public void setIterData(int iter, double nowJ, double L, TimeSpan t)
         {
-            Invoke(new MethodInvoker(() => { richTextBox1.Text += iter + ")" + nowJ + "\t" + L + "\t time: " + t + "\n"; }));
+            //Invoke(new MethodInvoker(() => { richTextBox1.Text += iter + ")" + nowJ + "\t" + L + "\t time: " + t + "\n"; }));
         }
 
         private void button1Prov_Click(object sender, EventArgs e)
@@ -105,6 +114,11 @@ namespace Решатель
                 richTextBox3.Text = "";
                 list.ForEach((x) => { x.ForEach((y) => { richTextBox3.Text += y + " \t \t "; }); richTextBox3.Text += "\n"; });
             }
+        }
+
+        private void MainWindow_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

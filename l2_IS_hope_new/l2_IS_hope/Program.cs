@@ -166,6 +166,7 @@ namespace l2_IS_hope
                         //foreach ()
                         //    var comp = new Computation(H, oldQ);
                     }
+
                     foreach (var Opr in H)
                     {                      
                         Opr.old_coeff = Opr.coeff;                       

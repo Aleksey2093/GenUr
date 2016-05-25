@@ -166,6 +166,7 @@
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "MainWindow";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.MainWindow_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.ResumeLayout(false);
