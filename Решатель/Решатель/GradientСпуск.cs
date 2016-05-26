@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Решатель
 {
@@ -14,9 +15,11 @@ namespace Решатель
         private double[] delta;
         private double eps;
         private double la;
+        private MainWindow mainWindow;
 
-        public GradientСпуск(double[][] proiz, double[] ylean, double eps, double la, int coutkoef)
+        public GradientСпуск(double[][] proiz, double[] ylean, double eps, double la, int coutkoef, MainWindow ma)
         {
+            mainWindow = ma;
             // TODO: Complete member initialization
             this.proiz = proiz;
             this.ylean = ylean;
@@ -33,37 +36,43 @@ namespace Решатель
             }
             koef[0] = 0;
         }
-
         private double getJ()
         {
             double Jb = 0;
-            
             for (int i=0;i<koef.Length;i++)
             {
                 delta[i] = 0;
             }
             for (int i = 0; i < ylean.Length; i++)
+            //Parallel.For(0,ylean.Length,(i,state)=>
             {
                 double Y = 0;
-                for (int j=1;j<koef.Length;j++)
+                for (int j=0;j<koef.Length;j++)
                 {
                     Y += koef[j] * proiz[i][j];
                 }
-                Jb += (1.0 / ylean.Length / 2.0) * (Y - ylean[i]) * (Y - ylean[i]);
-                for (int j=1;j<koef.Length;j++)
+                double arg2 = (Y - ylean[i]);
+                Jb += argJb * Math.Pow(arg2,2);
+                double argdelta2 = arg2 * argdelta;
+                for (int j=0;j<koef.Length;j++)
                 {
-                    delta[j] += (1.0 / ylean.Length) * (Y - ylean[i]); //*proiz[i][j];
+                    delta[j] += argdelta2 *proiz[i][j];
                 }
-            }
+            }//);
             return Jb;
         }
-
+        double argdelta;
+        double argJb;
         public double[] runСпуск()
         {
+            argdelta = (1.0 / ylean.Length);
+            argJb = (1.0 / ylean.Length / 2.0);
             double nowJ, oldJ = 0;
             nowJ = getJ();
+            int iter = 0, oiter = 0;
             while(Math.Abs(oldJ-nowJ)>eps)
             {
+                iter++;
                 oldkoef = (double[])koef.Clone();
                 for (int i=0;i<koef.Length;i++)
                 {
@@ -72,6 +81,7 @@ namespace Решатель
                 double tmpold = oldJ;
                 oldJ = nowJ;
                 nowJ = getJ();
+                eps = oldJ * 0.00001;
                 if (Math.Abs(tmpold-oldJ) < Math.Abs(oldJ - nowJ))
                 {
                     la = la / 2.0;
@@ -83,10 +93,16 @@ namespace Решатель
                 {
                     la = la * 2.0;
                 }
-                Console.WriteLine(nowJ + "\t" + la);
+                if (iter - oiter > 99)
+                {
+                    oiter = iter;
+                    Console.WriteLine(iter+")\t"+nowJ + "\t" + la);
+                    mainWindow.setIterData(iter, nowJ, la);
+                }
             }
-
-            return koef;
+            mainWindow.setIterData(iter, nowJ, la);
+            Console.WriteLine("finish \t" + nowJ + "\t" + la);
+            return (double[])koef.Clone();
         }
     }
 }

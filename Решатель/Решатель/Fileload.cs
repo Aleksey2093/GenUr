@@ -76,6 +76,7 @@ namespace Решатель
             {
                 OpenFileDialog open = new OpenFileDialog();
                 open.Filter = "Data files (*.csv)|*.csv";
+                open.Title = "Открыть файл с данными";
                 DialogResult r = open.ShowDialog();
                 if (r != System.Windows.Forms.DialogResult.OK)
                     return null;
@@ -100,6 +101,48 @@ namespace Решатель
             {
                 return null;
             }
+        }
+
+        internal void saveKoef(double[] koef)
+        {
+            SaveFileDialog save = new SaveFileDialog();
+            save.Filter = "Koef files (*.csv)|*.csv";
+            save.Title = "Сохранить коэффициенты";
+            DialogResult r = save.ShowDialog();
+            if (r != System.Windows.Forms.DialogResult.OK)
+                return;
+            string datakoef = ""; int i;
+            for (i=0;i<koef.Length-1;i++)
+            {
+                datakoef += koef[i] + ";";
+            }
+            datakoef += koef[i];
+            System.IO.File.WriteAllText(save.FileName,datakoef);
+        }
+
+        internal double[] getLoadKoef()
+        {
+            List<double> koef = new List<double>();
+            OpenFileDialog open = new OpenFileDialog();
+            open.Filter = "Koef files (*.csv)|*.csv";
+            open.Title = "Открыть коэффициенты";
+            DialogResult r = open.ShowDialog();
+            if (r != System.Windows.Forms.DialogResult.OK)
+                return null;
+            string line = System.IO.File.ReadAllText(open.FileName);
+            string[] strkoef = line.Split(';');
+            foreach(var str in strkoef)
+            {
+                double k;
+                if (!double.TryParse(str, out k))
+                    if (!double.TryParse(str.Replace(".", ","), out k))
+                        if (!double.TryParse(str.Replace(",", "."), out k))
+                        {
+                            MessageBox.Show("Обнаружена ошибка в файле коэффициентов. Доп информация: " + str, "Ошибка чтения", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                            return null;
+                        }
+            }
+            return koef.ToArray();
         }
     }
 }

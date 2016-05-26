@@ -14,15 +14,18 @@ namespace Решатель
             List<List<double>> list = new List<List<double>>();
             double[] yfile;
             double[][] proiz = getProiz(listPeremens,resUr,koef, out yfile);
-            for (int i=0;i<proiz.Length;i++)
+            int len = 100;
+            if (proiz.Length < 100)
+                len = proiz.Length;
+            for (int i=0;i<len;i++)
             {
                 double[] tmp = new double[3];
                 double Y = 0;
-                for (int j = 1; j < proiz[i].Length;j++)
+                for (int j = 0; j < proiz[i].Length;j++)
                     Y += proiz[i][j];
                 tmp[0] = Y;
                 tmp[1] = yfile[i];
-                tmp[2] = Math.Abs(tmp[0] - tmp[1]);
+                tmp[2] = Math.Abs(tmp[0] - tmp[1])/yfile[i];
                 list.Add(tmp.ToList());
             }
             return list;
@@ -42,10 +45,10 @@ namespace Решатель
                         listPeremens[j].setKatValue(list[i][j].getValueKat());
                     else
                         listPeremens[j].ValueDouble = list[i][j].getValueDob();
-                proiz[i][0] = 1;
                 yfile[i] = list[i][j].getValueDob();
+                proiz[i][0] = 1 * koef[j + 1];
                 for (j = 0; j < resUr.Count; j++)
-                    proiz[i][j + 1] = resUr[j].getProiz() * koef[j];
+                    proiz[i][j + 1] = resUr[j].getProiz() * koef[j+1];
             }
             return proiz;
         }

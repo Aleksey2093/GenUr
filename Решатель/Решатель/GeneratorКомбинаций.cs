@@ -9,7 +9,7 @@ namespace Решатель
     class GeneratorКомбинаций
     {
         private List<Peremennaya> listpers;
-        private int stepen;
+        //private int stepen;
         /// <summary>
         /// генератор комбинаций уравнения
         /// </summary>

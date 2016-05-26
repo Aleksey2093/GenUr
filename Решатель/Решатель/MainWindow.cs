@@ -79,9 +79,10 @@ namespace Решатель
         private void button2Gradient_Click(object sender, EventArgs e)
         {
             richTextBox1.Text = "";
+            richTextBox2.Text = "";
             if (listPeremens == null || listPeremens.Count == 0)
             {
-                MessageBox.Show("Загрузите файл с переменными","", MessageBoxButtons.OK, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1);
+                MessageBox.Show("Загрузите файл с переменными", "", MessageBoxButtons.OK, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1);
                 return;
             }
             GeneratorКомбинаций genkombi = new GeneratorКомбинаций(listPeremens);
@@ -93,25 +94,38 @@ namespace Решатель
             Proiz classProiz = new Proiz();
             double[][] proiz;
             double[] ylean;
-            classProiz.getProiz(listPeremens,allstkombo,learn,out proiz,out ylean);
+            classProiz.getProiz(listPeremens, allstkombo, learn, out proiz, out ylean);
             if (provPrizAndYlean(proiz, ylean, learn.Count, allstkombo.Count + 1) == false)
                 return;
             double eps = 1.0, la = 0.0001;
-            GradientСпуск grad = new GradientСпуск(proiz,ylean,eps,la,allstkombo.Count+1);
-            koef = grad.runСпуск();
-            resUr = allstkombo;
-            foreach (var i in koef)
-                richTextBox2.Text += i + "\t";
+            textBox1.Text = "start time: " + DateTime.Now;
+            new Thread(delegate()
+            {
+                GradientСпуск grad = new GradientСпуск(proiz, ylean, eps, la, allstkombo.Count + 1, this);
+                koef = grad.runСпуск();
+                resUr = allstkombo;
+                Invoke(new MethodInvoker(() =>
+                {
+                    foreach (var i in koef)
+                        richTextBox2.Text += i + "\t";
+                    richTextBox1.Text = "end time: " + DateTime.Now + "\n" + richTextBox1.Text;
+                }));
+            }).Start();
         }
 
-        public void setIterData(int iter, double nowJ, double L, TimeSpan t)
+        public void setIterData(int iter, double nowJ, double L)
         {
-            //Invoke(new MethodInvoker(() => { richTextBox1.Text += iter + ")" + nowJ + "\t" + L + "\t time: " + t + "\n"; }));
+            Invoke(new MethodInvoker(() => {
+                if (richTextBox1.Text.Length > 5000)
+                    richTextBox1.Text = "";
+                richTextBox1.Text = iter + ")" + nowJ + "\t" + L + "\n" + richTextBox1.Text;
+            }));
         }
 
         private void button1Prov_Click(object sender, EventArgs e)
         {
-            if (resUr != null && listPeremens != null && resUr.Count != 0 && listPeremens.Count != 0)
+            if (koef != null && koef.Length > 0 && resUr != null && listPeremens != null 
+                && resUr.Count != 0 && listPeremens.Count != 0)
             {
                 List<List<double>> list = new List<List<double>>();
                 list = new ProvY().runProv(listPeremens, resUr, koef);
@@ -121,6 +135,51 @@ namespace Решатель
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1СохранитьКоэф_Click(object sender, EventArgs e)
+        {
+            if (richTextBox2.Text.Length > 0 && koef != null && koef.Length > 0)
+            {
+                new Fileload().saveKoef(koef);
+            }
+        }
+
+        /// <summary>
+        /// открыть коэфициенты
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button2_Click(object sender, EventArgs e)
+        {
+            richTextBox1.Text = "";
+            richTextBox2.Text = "";
+            if (listPeremens == null || listPeremens.Count == 0)
+            {
+                MessageBox.Show("Загрузите файл с переменными", "", MessageBoxButtons.OK, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1);
+                return;
+            }
+            GeneratorКомбинаций genkombi = new GeneratorКомбинаций(listPeremens);
+            List<Kombinacia> allstkombo = genkombi.runGen();
+            Fileload file = new Fileload();
+            List<List<ValueFile>> learn = file.getDataFile();
+            if (learn == null || learn.Count == 0)
+                return;
+            Proiz classProiz = new Proiz();
+            double[][] proiz;
+            double[] ylean;
+            classProiz.getProiz(listPeremens, allstkombo, learn, out proiz, out ylean);
+            if (provPrizAndYlean(proiz, ylean, learn.Count, allstkombo.Count + 1) == false)
+                return;
+            koef = new Fileload().getLoadKoef();
+            if (koef == null || koef.Length == 0 && koef.Length == allstkombo.Count + 1)
+                return;
+            button1Prov.PerformClick();
+        }
+
+        private void button1provpoKoef_Click(object sender, EventArgs e)
         {
 
         }
