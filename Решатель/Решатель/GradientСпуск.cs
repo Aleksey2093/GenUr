@@ -27,69 +27,65 @@ namespace Решатель
             delta = new double[coutkoef];
             for (int i = 0; i < coutkoef; i++)
             {
-                koef[i] = 1;
+                koef[i] = 0;
                 oldkoef[i] = 0;
                 delta[i] = 0;
             }
+            koef[0] = 0;
         }
 
-        /// <summary>
-        /// считает J
-        /// </summary>
-        /// <returns></returns>
-        private double getJnew()
+        private double getJ()
         {
-            for (int i = 0; i < delta.Length; i++)
+            double Jb = 0;
+            
+            for (int i=0;i<koef.Length;i++)
+            {
                 delta[i] = 0;
-            double J = 0;
-            for (int i=0;i<ylean.Length;i++)
+            }
+            for (int i = 0; i < ylean.Length; i++)
             {
                 double Y = 0;
-                for (int j=0;j<koef.Length;j++)
+                for (int j=1;j<koef.Length;j++)
                 {
                     Y += koef[j] * proiz[i][j];
                 }
-                double tm = (Y - ylean[i]);
-                J += (1.0 / ylean.Length / 2.0)*tm*tm;
-                for (int j=0;j<delta.Length;j++)
+                Jb += (1.0 / ylean.Length / 2.0) * (Y - ylean[i]) * (Y - ylean[i]);
+                for (int j=1;j<koef.Length;j++)
                 {
-                    delta[j] += (1.0 / ylean.Length) * (tm) * proiz[i][j];
+                    delta[j] += (1.0 / ylean.Length) * (Y - ylean[i]); //*proiz[i][j];
                 }
             }
-            return J;
+            return Jb;
         }
 
-        public double[] runGradientСпуск()
+        public double[] runСпуск()
         {
-            double nowJ, oldJ = 0, tmpnowJ, tmpoldJ;
-            double f1 = la / ylean.Length;
-            nowJ = getJnew();
-            while(Math.Abs(oldJ - nowJ) > eps)
+            double nowJ, oldJ = 0;
+            nowJ = getJ();
+            while(Math.Abs(oldJ-nowJ)>eps)
             {
-                //расчитать значения коэфциентов
-                oldkoef = (double[])koef.Clone(); //сохраняем старые коэффициенты
-                for (int i = 0; i < koef.Length;i++ )
+                oldkoef = (double[])koef.Clone();
+                for (int i=0;i<koef.Length;i++)
                 {
-                    koef[i] = koef[i] - la * delta[i];
+                    koef[i] -= la * delta[i];
                 }
-                tmpnowJ = nowJ; //старое nowJ
-                tmpoldJ = oldJ; //старое oldJ
-                oldJ = nowJ; //новое oldJ
-                nowJ = getJnew();//новое nowJ
-                if (Math.Abs(oldJ-nowJ)>Math.Abs(tmpoldJ-tmpnowJ)) //если новые значения больше старых делаем откат
+                double tmpold = oldJ;
+                oldJ = nowJ;
+                nowJ = getJ();
+                if (Math.Abs(tmpold-oldJ) < Math.Abs(oldJ - nowJ))
                 {
-                    la = la / 20;
-                    koef = (double[])oldkoef.Clone(); //возвращаем значения коэффициентов
-                    oldJ = tmpoldJ; //возвращаем старое oldJ
-                    nowJ = getJnew(); //перерасчитывает J
+                    la = la / 2.0;
+                    oldJ = tmpold;
+                    koef = (double[])oldkoef.Clone();
+                    nowJ = getJ();
                 }
                 else
                 {
-                    la = la * 2;
+                    la = la * 2.0;
                 }
-                
+                Console.WriteLine(nowJ + "\t" + la);
             }
-            Console.WriteLine("J = " + nowJ + " lamda = " + la);
+
             return koef;
         }
     }

@@ -25,6 +25,8 @@ namespace Решатель
         private void button1xml_Click(object sender, EventArgs e)
         {
             int index = 0;
+            treeView1.Nodes.Clear();
+            listPeremens.Clear();
             listPeremens = new Fileload().getXML();
             if (listPeremens == null || listPeremens.Count == 0)
                 return;
@@ -86,15 +88,17 @@ namespace Решатель
             List<Kombinacia> allstkombo = genkombi.runGen();
             Fileload file = new Fileload();
             List<List<ValueFile>> learn = file.getDataFile();
+            if (learn == null || learn.Count == 0)
+                return;
             Proiz classProiz = new Proiz();
             double[][] proiz;
             double[] ylean;
             classProiz.getProiz(listPeremens,allstkombo,learn,out proiz,out ylean);
             if (provPrizAndYlean(proiz, ylean, learn.Count, allstkombo.Count + 1) == false)
                 return;
-            double eps = 1.0000, la = 0.000001;
+            double eps = 1.0, la = 0.0001;
             GradientСпуск grad = new GradientСпуск(proiz,ylean,eps,la,allstkombo.Count+1);
-            koef = grad.runGradientСпуск();
+            koef = grad.runСпуск();
             resUr = allstkombo;
             foreach (var i in koef)
                 richTextBox2.Text += i + "\t";
