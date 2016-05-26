@@ -26,6 +26,7 @@ namespace Решатель
                 tmp[0] = Y;
                 tmp[1] = yfile[i];
                 tmp[2] = Math.Abs(tmp[0] - tmp[1])/yfile[i];
+                tmp[2] = Math.Abs(tmp[2]);
                 list.Add(tmp.ToList());
             }
             return list;

@@ -39,26 +39,18 @@ namespace Решатель
         private double getJ()
         {
             double Jb = 0;
-            for (int i=0;i<koef.Length;i++)
-            {
-                delta[i] = 0;
-            }
+            delta.AsParallel().ForAll(x=> { x = 0; });
             for (int i = 0; i < ylean.Length; i++)
-            //Parallel.For(0,ylean.Length,(i,state)=>
             {
                 double Y = 0;
                 for (int j=0;j<koef.Length;j++)
-                {
                     Y += koef[j] * proiz[i][j];
-                }
                 double arg2 = (Y - ylean[i]);
                 Jb += argJb * Math.Pow(arg2,2);
                 double argdelta2 = arg2 * argdelta;
                 for (int j=0;j<koef.Length;j++)
-                {
                     delta[j] += argdelta2 *proiz[i][j];
-                }
-            }//);
+            }
             return Jb;
         }
         double argdelta;

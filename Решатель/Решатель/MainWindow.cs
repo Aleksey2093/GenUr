@@ -91,6 +91,25 @@ namespace Решатель
             List<List<ValueFile>> learn = file.getDataFile();
             if (learn == null || learn.Count == 0)
                 return;
+            DialogQ q = new DialogQ();
+            if (learn.Count > 10000)
+            {
+                DialogResult r = MessageBox.Show("Файл обучения содержит " + learn.Count +
+                    " строк. Умешить для ускорения работы алгоритма градиентного спуска",
+                    "", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+                if (r == DialogResult.Yes)
+                {
+                retq:
+                    q.Text = "Количество элементов файла обучения";
+                    q.setText("Введите количество элементов, которые необходимо забрать из файла");
+                    q.ShowDialog();
+                    int len = q.getValueInt();
+                    if (len > learn.Count || len == -1)
+                        goto retq;
+                    else if (len != -2)
+                        learn = learn.GetRange(0, len);
+                }
+            }
             Proiz classProiz = new Proiz();
             double[][] proiz;
             double[] ylean;
@@ -98,7 +117,14 @@ namespace Решатель
             if (provPrizAndYlean(proiz, ylean, learn.Count, allstkombo.Count + 1) == false)
                 return;
             double eps = 1.0, la = 0.0001;
+            /*if()
+            q.setText("Введение значение lamda");
+            q.Text = "Значение la";
+            q.ShowDialog();*/
+            la = q.getValueDouble();
             textBox1.Text = "start time: " + DateTime.Now;
+            toolStripLabel1.Text = "Работает градиентный спуск";
+            toolStripProgressBar1.Value = 1;
             new Thread(delegate()
             {
                 GradientСпуск grad = new GradientСпуск(proiz, ylean, eps, la, allstkombo.Count + 1, this);
@@ -106,6 +132,7 @@ namespace Решатель
                 resUr = allstkombo;
                 Invoke(new MethodInvoker(() =>
                 {
+                    toolStripLabel1.Text = "Градиентный спуск закончил работу";
                     foreach (var i in koef)
                         richTextBox2.Text += i + "\t";
                     richTextBox1.Text = "end time: " + DateTime.Now + "\n" + richTextBox1.Text;
@@ -113,9 +140,20 @@ namespace Решатель
             }).Start();
         }
 
+        /// <summary>
+        /// обновляет значение процесс бара и тестового блока, для отображения информации
+        /// о работе градиентного спуска
+        /// </summary>
+        /// <param name="iter">номер итерации градиентного спуска</param>
+        /// <param name="nowJ">значение J на текущей итерации</param>
+        /// <param name="L">значение лямды на текущей итерации</param>
         public void setIterData(int iter, double nowJ, double L)
         {
             Invoke(new MethodInvoker(() => {
+                if (toolStripProgressBar1.Value == 100)
+                    toolStripProgressBar1.Value = 1;
+                toolStripProgressBar1.Value++;
+
                 if (richTextBox1.Text.Length > 5000)
                     richTextBox1.Text = "";
                 richTextBox1.Text = iter + ")" + nowJ + "\t" + L + "\n" + richTextBox1.Text;
@@ -130,7 +168,8 @@ namespace Решатель
                 List<List<double>> list = new List<List<double>>();
                 list = new ProvY().runProv(listPeremens, resUr, koef);
                 richTextBox3.Text = "";
-                list.ForEach((x) => { x.ForEach((y) => { richTextBox3.Text += y + " \t \t "; }); richTextBox3.Text += "\n"; });
+                list.ForEach((x)=> { richTextBox3.Text += x[2] + "\n"; });
+                //list.ForEach((x) => { x.ForEach((y) => { richTextBox3.Text += y + " \t \t "; }); richTextBox3.Text += "\n"; });
             }
         }
 
