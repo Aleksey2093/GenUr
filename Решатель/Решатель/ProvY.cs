@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Решатель
 {
@@ -9,26 +11,26 @@ namespace Решатель
     {
 
 
-        internal List<List<double>> runProv(List<Peremennaya> listPeremens, List<Kombinacia> resUr, double[] koef)
+        internal double[][] runProv(List<Peremennaya> listPeremens, List<Kombinacia> resUr, double[] koef)
         {
-            List<List<double>> list = new List<List<double>>();
             double[] yfile;
             double[][] proiz = getProiz(listPeremens,resUr,koef, out yfile);
             int len = 100;
             if (proiz.Length < 100)
                 len = proiz.Length;
-            for (int i=0;i<len;i++)
+            double[][] list = new double[len][];
+            Parallel.For(0, len, (i, state) =>
             {
                 double[] tmp = new double[3];
                 double Y = 0;
-                for (int j = 0; j < proiz[i].Length;j++)
+                for (int j = 0; j < proiz[i].Length; j++)
                     Y += proiz[i][j];
                 tmp[0] = Y;
                 tmp[1] = yfile[i];
-                tmp[2] = Math.Abs(tmp[0] - tmp[1])/yfile[i];
+                tmp[2] = Math.Abs(tmp[0] - tmp[1]) / yfile[i];
                 tmp[2] = Math.Abs(tmp[2]);
-                list.Add(tmp.ToList());
-            }
+                list[i] = tmp;
+            });
             return list;
         }
 

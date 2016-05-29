@@ -18,7 +18,7 @@ namespace Решатель
         private Peremennaya addNewPer(string name)
         {
             Peremennaya p = new Peremennaya();
-            p.AddValueDouble(name);
+            p.Create(name);
             return p;
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace Решатель
         private Peremennaya addNewKategor(string name, List<string> list)
         {
             Peremennaya p = new Peremennaya();
-            p.AddValuesKat(name, list);
+            p.Create(name, list);
             return p;
         }
         /// <summary>

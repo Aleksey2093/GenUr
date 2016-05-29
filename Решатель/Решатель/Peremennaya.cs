@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Решатель
 {
@@ -107,7 +108,7 @@ namespace Решатель
         /// добавление новой переменной и указание того, что переменная типа double
         /// </summary>
         /// <param name="NamePer">название переменной</param>
-        public void AddValueDouble(string NamePer)
+        public void Create(string NamePer)
         {
             name = NamePer;
             kat = false;
@@ -117,7 +118,7 @@ namespace Решатель
         /// </summary>
         /// <param name="NamePer">название переменной</param>
         /// <param name="NamesCat">значений переменных категории</param>
-        public void AddValuesKat(string NamePer,List<string> NamesCat)
+        public void Create(string NamePer,List<string> NamesCat)
         {
             name = NamePer;
             kat = true;
@@ -132,18 +133,60 @@ namespace Решатель
     /// </summary>
     class Kombinacia
     {
-        List<Peremennaya> pers;
-        List<int> numberscat;
+        private List<Peremennaya> pers;
+        private List<int> numberscat;
 
         /// <summary>
-        /// устанвливает значение комбинации
+        /// Создает новую комбинацию
+        /// </summary>
+        public Kombinacia()
+        {
+            this.pers = new List<Peremennaya>();
+            this.numberscat = new List<int>();
+        }
+
+        /// <summary>
+        /// Создает новую комбинацию
+        /// </summary>
+        /// <param name="kombo">копинация значения которой копируются в новую</param>
+        public Kombinacia(Kombinacia kombo)
+        {
+            this.pers = new List<Peremennaya>(kombo.pers);
+            this.numberscat = new List<int>(kombo.numberscat);
+        }
+
+        /// <summary>
+        /// устанвливает значение комбинации.
         /// </summary>
         /// <param name="listpers">список переменных входящих в комбинацию</param>
         /// <param name="listcatnums">индекс значений типа категория, если не категория, то -1</param>
-        public void setKombinacia(List<Peremennaya> listpers, List<int> listcatnums)
+        public void Create(List<Peremennaya> listpers, List<int> listcatnums)
         {
             pers = new List<Peremennaya>(listpers);
             numberscat = new List<int>(listcatnums);
+        }
+
+        /// <summary>
+        /// добавляет к этой комбинации новую переменную
+        /// </summary>
+        /// <param name="per">переменная которая добавляется</param>
+        /// <param name="num">номер значения категории</param>
+        public void Create(Peremennaya per, int num)
+        {
+            if (pers == null)
+                Parallel.Invoke(() => { pers = new List<Peremennaya>(); }, () => { numberscat = new List<int>(); });
+            Parallel.Invoke(() => { pers.Add(per); }, () => { numberscat.Add(num); });
+        }
+
+        /// <summary>
+        /// добавляет к этой комбинации новую переменную
+        /// </summary>
+        /// <param name="per">переменная которая добавляется</param>
+        public void Create(Peremennaya per)
+        {
+            if (pers == null)
+                Parallel.Invoke(() => { pers = new List<Peremennaya>(); }, () => { numberscat = new List<int>(); });
+            Parallel.Invoke(() => { pers.Add(per); }, () => { numberscat.Add(-1); });
         }
 
         public void printKombo()

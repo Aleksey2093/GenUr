@@ -9,7 +9,7 @@ namespace Решатель
     class GeneratorКомбинаций
     {
         private List<Peremennaya> listpers;
-        //private int stepen;
+        private int stepen;
         /// <summary>
         /// генератор комбинаций уравнения
         /// </summary>
@@ -17,10 +17,10 @@ namespace Решатель
         public GeneratorКомбинаций(List<Peremennaya> list)
         {
             this.listpers = list;
-            //DialogQ d = new DialogQ();
-            //d.setText("Введите максимальную степень уравнения");
-            //d.ShowDialog();
-            //this.stepen = d.getValue();
+            DialogQ d = new DialogQ();
+            d.setText("Введите максимальную степень уравнения");
+            d.ShowDialog();
+            this.stepen = d.getValueInt();
         }
 
         /// <summary>
@@ -30,18 +30,18 @@ namespace Решатель
         private List<Kombinacia> genOneSt()
         {
             List<Kombinacia> list = new List<Kombinacia>();
-            for (int i=0;i<listpers.Count;i++)
+            for (int i = 0; i < listpers.Count; i++)
             {
                 if (listpers[i].IfKategori)
                 {
-                    for (int j=0;j<listpers[i].getCountKat();j++)
+                    for (int j = 0; j < listpers[i].getCountKat(); j++)
                     {
                         List<Peremennaya> p = new List<Peremennaya>();
                         List<int> ns = new List<int>();
                         p.Add(listpers[i]);
                         ns.Add(j);
                         Kombinacia k = new Kombinacia();
-                        k.setKombinacia(p, ns);
+                        k.Create(p, ns);
                         list.Add(k);
                     }
                 }
@@ -52,7 +52,7 @@ namespace Решатель
                     p.Add(listpers[i]);
                     j.Add(-1);
                     Kombinacia k = new Kombinacia();
-                    k.setKombinacia(p, j);
+                    k.Create(p, j);
                     list.Add(k);
                 }
             }
@@ -75,14 +75,14 @@ namespace Решатель
                 var p2 = listpers[i];
                 if (p2.IfKategori)
                 {
-                    for (int j=0;j<p2.getCountKat();j++)
+                    for (int j = 0; j < p2.getCountKat(); j++)
                     {
                         Kombinacia k = new Kombinacia();
                         List<Peremennaya> pl = new List<Peremennaya>();
                         List<int> numbers = new List<int>();
                         pl.Add(p1); pl.Add(p2);
                         numbers.Add(num1); numbers.Add(j);
-                        k.setKombinacia(pl, numbers);
+                        k.Create(pl, numbers);
                         list.Add(k);
                     }
                 }
@@ -93,7 +93,7 @@ namespace Решатель
                     List<int> numbers = new List<int>();
                     pl.Add(p1); pl.Add(p2);
                     numbers.Add(num1); numbers.Add(-1);
-                    k.setKombinacia(pl, numbers);
+                    k.Create(pl, numbers);
                     list.Add(k);
                 }
             }
@@ -108,7 +108,7 @@ namespace Решатель
         {
             List<Kombinacia> list = new List<Kombinacia>();
 
-            for (int i=0;i<listpers.Count;i++)
+            for (int i = 0; i < listpers.Count; i++)
             {
                 var p1 = listpers[i];
                 if (p1.IfKategori)
@@ -118,7 +118,7 @@ namespace Решатель
                 }
                 else
                 {
-                    list.AddRange(addKombo2perTwoStep(i , -1, i));
+                    list.AddRange(addKombo2perTwoStep(i, -1, i));
                 }
             }
             return list;
@@ -137,20 +137,20 @@ namespace Решатель
         {
             List<Kombinacia> list = new List<Kombinacia>();
             var p1 = listpers[index1];
-            var p2 = listpers[index2]; 
-            for (int i = index3; i < listpers.Count;i++ )
+            var p2 = listpers[index2];
+            for (int i = index3; i < listpers.Count; i++)
             {
                 var p3 = listpers[i];
                 if (p3.IfKategori)
                 {
-                    for (int j=0;j<p3.getCountKat();j++)
+                    for (int j = 0; j < p3.getCountKat(); j++)
                     {
                         Kombinacia k = new Kombinacia();
                         List<Peremennaya> pl = new List<Peremennaya>();
                         List<int> nums = new List<int>();
                         pl.Add(p1); pl.Add(p2); pl.Add(p3);
                         nums.Add(num1); nums.Add(num2); nums.Add(j);
-                        k.setKombinacia(pl, nums);
+                        k.Create(pl, nums);
                         list.Add(k);
                     }
                 }
@@ -161,7 +161,7 @@ namespace Решатель
                     List<int> nums = new List<int>();
                     pl.Add(p1); pl.Add(p2); pl.Add(p3);
                     nums.Add(num1); nums.Add(num2); nums.Add(-1);
-                    k.setKombinacia(pl, nums);
+                    k.Create(pl, nums);
                     list.Add(k);
                 }
             }
@@ -224,7 +224,12 @@ namespace Решатель
         public List<Kombinacia> runGen()
         {
             List<Kombinacia> allst = new List<Kombinacia>();
-            var st1 = genOneSt();
+            for (int i = 0; i < stepen; i++)
+            {
+                var tmp = getForKombiGen(0, 0, i, new Kombinacia());
+                allst.AddRange(tmp);
+            }
+            /*var st1 = genOneSt();
             var st2 = genTwoSt();
             var st3 = gen3St();
             allst.AddRange(st1);
@@ -233,9 +238,62 @@ namespace Решатель
             for (int i = 0; i < allst.Count; i++)
             {
                 allst[i].printKombo();   
-            }
+            }*/
             return allst;
         }
 
+        private List<Kombinacia> getForKombiGen(int index, int nowst, int st, Kombinacia kombo)
+        {
+            List<Kombinacia> list = new List<Kombinacia>();
+            if (nowst < st)
+            {
+                for (int i = index; i < listpers.Count; i++)
+                {
+                    if (listpers[i].IfKategori)
+                    {
+                        for (int j = 0; j < listpers[i].getCountKat(); j++)
+                        {
+                            Kombinacia tmpkombo = new Kombinacia(kombo);
+                            tmpkombo.Create(listpers[i], j);
+                            var tmp = getForKombiGen(i + 1, nowst + 1, st, tmpkombo);
+                            list.AddRange(tmp);
+                        }
+                    }
+                    else
+                    {
+                        Kombinacia tmpkombo = new Kombinacia(kombo);
+                        tmpkombo.Create(listpers[i]);
+                        var tmp = getForKombiGen(i, nowst + 1, st, tmpkombo);
+                        list.AddRange(tmp);
+                    }
+                }
+            }
+            else if (nowst == st)
+            {
+                for (int i = index; i < listpers.Count; i++)
+                {
+                    if (listpers[i].IfKategori)
+                    {
+                        for (int j = 0; j < listpers[i].getCountKat(); j++)
+                        {
+                            Kombinacia tmpkombo = new Kombinacia(kombo);
+                            tmpkombo.Create(listpers[i], j);
+                            list.Add(tmpkombo);
+                        }
+                    }
+                    else
+                    {
+                        Kombinacia tmpkombo = new Kombinacia(kombo);
+                        tmpkombo.Create(listpers[i]);
+                        list.Add(tmpkombo);
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("Текущая комбинация больше максимальной. Как код сюда попал????");
+            }
+            return list;
+        }
     }
 }

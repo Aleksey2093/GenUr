@@ -28,6 +28,8 @@ namespace Решатель
             treeView1.Nodes.Clear();
             listPeremens.Clear();
             listPeremens = new Fileload().getXML();
+            resUr = null; koef = null;
+            richTextBox1.Text = richTextBox2.Text = richTextBox3.Text = "";
             if (listPeremens == null || listPeremens.Count == 0)
                 return;
             foreach(var per in listPeremens)
@@ -68,12 +70,16 @@ namespace Решатель
                 return false;
             if (proiz.Length != learncout)
                 return false;
-            for (int i=0;i<proiz.Length;i++)
+            bool ifi = true;
+            Parallel.ForEach(proiz, (row,state) =>
             {
-                if (proiz[i].Length != rowlen)
-                    return false;
-            }
-            return true;
+                if (row.Length != rowlen)
+                {
+                    ifi = false;
+                    state.Stop();
+                }
+            });
+            return ifi;
         }
 
         private void button2Gradient_Click(object sender, EventArgs e)
@@ -117,11 +123,8 @@ namespace Решатель
             if (provPrizAndYlean(proiz, ylean, learn.Count, allstkombo.Count + 1) == false)
                 return;
             double eps = 1.0, la = 0.0001;
-            /*if()
-            q.setText("Введение значение lamda");
-            q.Text = "Значение la";
-            q.ShowDialog();*/
-            la = q.getValueDouble();
+            //eps = Properties.Settings.Default.eps;
+            //la = Properties.Settings.Default.lamda;
             textBox1.Text = "start time: " + DateTime.Now;
             toolStripLabel1.Text = "Работает градиентный спуск";
             toolStripProgressBar1.Value = 1;
@@ -129,7 +132,6 @@ namespace Решатель
             {
                 GradientСпуск grad = new GradientСпуск(proiz, ylean, eps, la, allstkombo.Count + 1, this);
                 koef = grad.runСпуск();
-                resUr = allstkombo;
                 Invoke(new MethodInvoker(() =>
                 {
                     toolStripLabel1.Text = "Градиентный спуск закончил работу";
@@ -137,6 +139,7 @@ namespace Решатель
                         richTextBox2.Text += i + "\t";
                     richTextBox1.Text = "end time: " + DateTime.Now + "\n" + richTextBox1.Text;
                 }));
+                resUr = allstkombo;
             }).Start();
         }
 
@@ -146,8 +149,9 @@ namespace Решатель
         /// </summary>
         /// <param name="iter">номер итерации градиентного спуска</param>
         /// <param name="nowJ">значение J на текущей итерации</param>
-        /// <param name="L">значение лямды на текущей итерации</param>
-        public void setIterData(int iter, double nowJ, double L)
+        /// <param name="lamda">значение лямды на текущей итерации</param>
+        /// <param name="t">значение промежутка времени от старта программы до момента который засек таймер</param>
+        public void setIterData(int iter, double nowJ, double lamda, TimeSpan t)
         {
             Invoke(new MethodInvoker(() => {
                 if (toolStripProgressBar1.Value == 100)
@@ -156,7 +160,8 @@ namespace Решатель
 
                 if (richTextBox1.Text.Length > 5000)
                     richTextBox1.Text = "";
-                richTextBox1.Text = iter + ")" + nowJ + "\t" + L + "\n" + richTextBox1.Text;
+                else
+                    richTextBox1.Text = iter + ") J: " + nowJ + "\t la: " + lamda + "\t time: " + t + "\n" + richTextBox1.Text;
             }));
         }
 
@@ -165,10 +170,9 @@ namespace Решатель
             if (koef != null && koef.Length > 0 && resUr != null && listPeremens != null 
                 && resUr.Count != 0 && listPeremens.Count != 0)
             {
-                List<List<double>> list = new List<List<double>>();
-                list = new ProvY().runProv(listPeremens, resUr, koef);
+                double[][] list = new ProvY().runProv(listPeremens, resUr, koef);
                 richTextBox3.Text = "";
-                list.ForEach((x)=> { richTextBox3.Text += x[2] + "\n"; });
+                list.ToList().ForEach((x)=> { richTextBox3.Text += x[2] + "\n"; });
                 //list.ForEach((x) => { x.ForEach((y) => { richTextBox3.Text += y + " \t \t "; }); richTextBox3.Text += "\n"; });
             }
         }
@@ -221,6 +225,11 @@ namespace Решатель
         private void button1provpoKoef_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void настройкиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new SettingsForm().ShowDialog();
         }
     }
 }

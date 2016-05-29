@@ -15,8 +15,8 @@ namespace Решатель
         /// <param name="pers">массив переменных</param>
         /// <param name="allkombi">все комбинации переменных</param>
         /// <param name="datafile">значения из файла</param>
-        /// <param name="proiz">переменная в которую вернутся произведения</param>
-        /// <param name="yfile">перемення в которую вернутся значения Y из файла</param>
+        /// <param name="x">переменная в которую вернутся произведения</param>
+        /// <param name="y">перемення в которую вернутся значения Y из файла</param>
         public void getProiz(List<Peremennaya> pers, List<Kombinacia> allkombi, List<List<ValueFile>> datafile, out double[][] proiz, out double[] yfile)
         {
             proiz = new double[datafile.Count][];

@@ -1,7 +1,12 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Решатель.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="eps" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">1E-100</Value>
+    </Setting>
+    <Setting Name="lamda" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">1E-05</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>
