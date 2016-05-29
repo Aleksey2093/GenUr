@@ -82,41 +82,37 @@ namespace Решатель
             rwa:
             while(Math.Abs(oldJ-nowJ)>eps)
             {
-                iter++;
-                oldkoef = (double[])koef.Clone();
-                Parallel.For(0, koef.Length, (i) => { koef[i] = koef[i] - la * delta[i].AsParallel().AsOrdered().Sum(); });
-                tmpold = oldJ;
-                oldJ = nowJ;
-                nowJ = getJ();
-                eps = oldJ * 0.0000000000000000000000000000000001;
-                if (Math.Abs(tmpold-oldJ) < Math.Abs(oldJ - nowJ))
+                Parallel.Invoke(() =>
                 {
-                    la = la / 2;
-                    oldJ = tmpold;
-                    koef = (double[])oldkoef.Clone();
+                    iter++;
+                    oldkoef = (double[])koef.Clone();
+                    //for (int i = 0; i < koef.Length; i++) koef[i] = koef[i] - la * delta[i].AsParallel().AsOrdered().Sum();
+                    Parallel.For(0, koef.Length, (i) => { koef[i] -= la * delta[i].Sum(); });
+                    tmpold = oldJ;
+                    oldJ = nowJ;
                     nowJ = getJ();
-                }
-                else
+                    eps = oldJ * 0.000000000000000000000000000000001;
+                    if (Math.Abs(tmpold - oldJ) < Math.Abs(oldJ - nowJ))
+                    {
+                        la = la / 2;
+                        oldJ = tmpold;
+                        koef = (double[])oldkoef.Clone();
+                        nowJ = getJ();
+                    }
+                    else
+                    {
+                        la = la * 2.0;
+                    }
+                }, () =>
                 {
-                    la = la * 2.0;
-                }
-                if (iter - oiter > 99)
-                {
-                    Parallel.Invoke(() =>
+                    if (iter - oiter > 99)
                     {
                         oiter = iter;
-                    }, () =>
-                    {
-                        Console.WriteLine(iter + ")\tJ: " + nowJ + "\tla: " + la + "\t time" + (starttime-DateTime.Now));
-                    }, () =>
-                    {
-                        mainWindow.setIterData(iter, nowJ, la, (starttime - DateTime.Now));
-                    });
-                }
-                if (nowJ == double.MaxValue || oldJ == double.MaxValue || nowJ == double.MinValue || oldJ == double.MinValue)
-                {
-
-                }
+                        TimeSpan end = DateTime.Now - starttime;
+                        Console.WriteLine(iter + ")\tJ: " + nowJ + "\tla: " + la + "\t time" + (end));
+                        mainWindow.setIterData(iter, nowJ, la, (end));
+                    }
+                });
             }
             if (!proh)
             {
