@@ -60,7 +60,7 @@ namespace Решатель
         }
         private double argdelta;
         private double argJb;
-        private int iter = 0, oiter = 0;
+        private int iter = 0;
         private double nowJ, oldJ = 0;
 
         private void shetchik()
@@ -68,13 +68,9 @@ namespace Решатель
             while (iter != -1)
             {
                 Thread.Sleep(60000);
-                if (iter - oiter > 499)
-                {
-                    oiter = iter;
                     TimeSpan end = DateTime.Now - starttime;
                     Console.WriteLine(iter + ")\tJ: " + nowJ + "\tla: " + la + "\t time" + (end));
                     mainWindow.setIterData(iter, nowJ, la, (end));
-                }
             }
         }
         DateTime starttime;
@@ -109,7 +105,7 @@ namespace Решатель
                 {
                     la = la * 2.0;
                 }
-                eps = oldJ * 0.000000000000000000000000000000001;
+                eps = oldJ * 0.000000001;
             }
             if (!proh)
             {
