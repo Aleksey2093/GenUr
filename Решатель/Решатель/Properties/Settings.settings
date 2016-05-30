@@ -3,10 +3,10 @@
   <Profiles />
   <Settings>
     <Setting Name="eps" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">1E-100</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="lamda" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">1E-05</Value>
+      <Value Profile="(Default)">0.0001</Value>
     </Setting>
   </Settings>
 </SettingsFile>

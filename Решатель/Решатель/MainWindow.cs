@@ -123,11 +123,12 @@ namespace Решатель
             if (provPrizAndYlean(proiz, ylean, learn.Count, allstkombo.Count + 1) == false)
                 return;
             double eps = 1.0, la = 0.0001;
-            //eps = Properties.Settings.Default.eps;
-            //la = Properties.Settings.Default.lamda;
+            eps = Properties.Settings.Default.eps;
+            la = Properties.Settings.Default.lamda;
             textBox1.Text = "start time: " + DateTime.Now;
             toolStripLabel1.Text = "Работает градиентный спуск";
             toolStripProgressBar1.Value = 1;
+            learn.Clear();
             new Thread(delegate()
             {
                 GradientСпуск grad = new GradientСпуск(proiz, ylean, eps, la, allstkombo.Count + 1, this);
@@ -153,28 +154,42 @@ namespace Решатель
         /// <param name="t">значение промежутка времени от старта программы до момента который засек таймер</param>
         public void setIterData(int iter, double nowJ, double lamda, TimeSpan t)
         {
-            Invoke(new MethodInvoker(() => {
-                if (toolStripProgressBar1.Value == 100)
-                    toolStripProgressBar1.Value = 1;
-                toolStripProgressBar1.Value++;
+            try
+            {
+                Invoke(new MethodInvoker(() =>
+                {
+                    if (toolStripProgressBar1.Value == 100)
+                        toolStripProgressBar1.Value = 1;
+                    toolStripProgressBar1.Value++;
 
-                if (richTextBox1.Text.Length > 5000)
-                    richTextBox1.Text = "";
-                else
-                    richTextBox1.Text = iter + ") J: " + nowJ + "\t la: " + lamda + "\t time: " + t + "\n" + richTextBox1.Text;
-            }));
+                    if (richTextBox1.Text.Length > 5000)
+                        richTextBox1.Text = "";
+                    else
+                        richTextBox1.Text = iter + ") J: " + nowJ + "\t la: " + lamda + "\t time: " + t + "\n" + richTextBox1.Text;
+                }));
+            }
+            catch(System.InvalidOperationException ex)
+            {
+                Console.WriteLine("Фигня фигней просто, приложение закрылось в тот момент, когда вторичный поток пытался что-то сделать с элементами управления уже закрытого окна," + 
+                "но у него ничего не получилось потому, что это окно уже закрыто и элементы управления ликвидированы. Текст ошибки: " + ex.ToString());
+            }
         }
 
         private void button1Prov_Click(object sender, EventArgs e)
         {
-            if (koef != null && koef.Length > 0 && resUr != null && listPeremens != null 
-                && resUr.Count != 0 && listPeremens.Count != 0)
+            new Thread(delegate()
             {
-                double[][] list = new ProvY().runProv(listPeremens, resUr, koef);
-                richTextBox3.Text = "";
-                list.ToList().ForEach((x)=> { richTextBox3.Text += x[2] + "\n"; });
-                //list.ForEach((x) => { x.ForEach((y) => { richTextBox3.Text += y + " \t \t "; }); richTextBox3.Text += "\n"; });
-            }
+                if (koef != null && koef.Length > 0 && resUr != null && listPeremens != null
+                    && resUr.Count != 0 && listPeremens.Count != 0)
+                {
+                    double[][] list = new ProvY().runProv(listPeremens, resUr, koef);
+                    Invoke(new MethodInvoker(() =>
+                    {
+                        richTextBox3.Text = "";
+                        list.ToList().ForEach((x) => { richTextBox3.Text += x[2] + "\n"; });
+                    }));
+                }
+            }).Start();
         }
 
         private void MainWindow_Load(object sender, EventArgs e)

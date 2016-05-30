@@ -25,7 +25,7 @@ namespace Решатель.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1E-100")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public double eps {
             get {
                 return ((double)(this["eps"]));
@@ -37,7 +37,7 @@ namespace Решатель.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1E-05")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.0001")]
         public double lamda {
             get {
                 return ((double)(this["lamda"]));

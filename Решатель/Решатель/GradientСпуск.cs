@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Решатель
@@ -43,18 +44,6 @@ namespace Решатель
         private double getJ()
         {
             double Jb = 0;
-            //Parallel.For(0, delta.Length, (i) => { for (int j = 0; j < delta[i].Length; j++) delta[i][j] = 0; });
-            /*for (int i = 0; i < ylean.Length; i++)
-            {
-                double Y = 0;
-                for (int j = 0; j < koef.Length; j++)
-                    Y += koef[j] * proiz[i][j];
-                double arg2 = (Y - ylean[i]);
-                Jb += argJb * Math.Pow(arg2, 2);
-                double argdelta2 = arg2 * argdelta;
-                for (int j = 0; j < koef.Length; j++)
-                    delta[j] += argdelta2 * proiz[i][j];
-            }*/
             Parallel.For(0, ylean.Length, (i, state) =>
             {
                 Ymass[i] = 0;
@@ -69,50 +58,58 @@ namespace Решатель
             Jb = JBmass.AsParallel().AsOrdered().Sum();
             return Jb;
         }
-        double argdelta;
-        double argJb;
+        private double argdelta;
+        private double argJb;
+        private int iter = 0, oiter = 0;
+        private double nowJ, oldJ = 0;
+
+        private void shetchik()
+        {
+            while (iter != -1)
+            {
+                Thread.Sleep(60000);
+                if (iter - oiter > 499)
+                {
+                    oiter = iter;
+                    TimeSpan end = DateTime.Now - starttime;
+                    Console.WriteLine(iter + ")\tJ: " + nowJ + "\tla: " + la + "\t time" + (end));
+                    mainWindow.setIterData(iter, nowJ, la, (end));
+                }
+            }
+        }
+        DateTime starttime;
         public double[] runСпуск()
         {
-            DateTime starttime = DateTime.Now;
+            starttime = DateTime.Now;
             argdelta = (1.0 / ylean.Length);
             argJb = (1.0 / ylean.Length / 2.0);
-            double nowJ, oldJ = 0, tmpold;
+            double tmpold; oldJ = 0;
             nowJ = getJ(); bool proh = true;
-            int iter = 0, oiter = 0; 
-            rwa:
-            while(Math.Abs(oldJ-nowJ)>eps)
+            Thread thread = new Thread(delegate() { shetchik(); });
+            thread.Start();
+        rwa:
+            while (Math.Abs(oldJ - nowJ) > eps)
             {
-                Parallel.Invoke(() =>
+            ret:
+                iter++;
+                oldkoef = (double[])koef.Clone();
+                Parallel.For(0, koef.Length, (i) => { koef[i] -= la * delta[i].Sum(); });
+                tmpold = oldJ;
+                oldJ = nowJ;
+                nowJ = getJ();
+                if (Math.Abs(tmpold - oldJ) < Math.Abs(oldJ - nowJ))
                 {
-                    iter++;
-                    oldkoef = (double[])koef.Clone();
-                    //for (int i = 0; i < koef.Length; i++) koef[i] = koef[i] - la * delta[i].AsParallel().AsOrdered().Sum();
-                    Parallel.For(0, koef.Length, (i) => { koef[i] -= la * delta[i].Sum(); });
-                    tmpold = oldJ;
-                    oldJ = nowJ;
+                    la = la / 2.0;
+                    oldJ = tmpold;
+                    koef = (double[])oldkoef.Clone();
                     nowJ = getJ();
-                    eps = oldJ * 0.000000000000000000000000000000001;
-                    if (Math.Abs(tmpold - oldJ) < Math.Abs(oldJ - nowJ))
-                    {
-                        la = la / 2;
-                        oldJ = tmpold;
-                        koef = (double[])oldkoef.Clone();
-                        nowJ = getJ();
-                    }
-                    else
-                    {
-                        la = la * 2.0;
-                    }
-                }, () =>
+                    goto ret;
+                }
+                else
                 {
-                    if (iter - oiter > 99)
-                    {
-                        oiter = iter;
-                        TimeSpan end = DateTime.Now - starttime;
-                        Console.WriteLine(iter + ")\tJ: " + nowJ + "\tla: " + la + "\t time" + (end));
-                        mainWindow.setIterData(iter, nowJ, la, (end));
-                    }
-                });
+                    la = la * 2.0;
+                }
+                eps = oldJ * 0.000000000000000000000000000000001;
             }
             if (!proh)
             {
@@ -120,6 +117,7 @@ namespace Решатель
                 proh = false;
                 goto rwa;
             }
+            iter = -1;
             mainWindow.setIterData(iter, nowJ, la, (starttime - DateTime.Now));
             Console.WriteLine("finish \t" + nowJ + "\t" + la, (starttime - DateTime.Now));
             return (double[])koef.Clone();
