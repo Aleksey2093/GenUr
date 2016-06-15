@@ -13,8 +13,17 @@ namespace Решатель
 
         internal double[][] runProv(List<Peremennaya> listPeremens, List<Kombinacia> resUr, double[] koef)
         {
-            double[] yfile;
-            double[][] proiz = getProiz(listPeremens,resUr,koef, out yfile);
+            double[] yfile = new double[1];
+            double[][] proiz = new double[1][];
+            try
+            {
+                proiz = getProiz(listPeremens, resUr, koef, out yfile);
+            }
+            catch (System.NullReferenceException ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return null;
+            }
             int len = 100;
             if (proiz.Length < 100)
                 len = proiz.Length;
@@ -29,6 +38,8 @@ namespace Решатель
                 tmp[1] = yfile[i];
                 tmp[2] = Math.Abs(tmp[0] - tmp[1]) / yfile[i];
                 tmp[2] = Math.Abs(tmp[2]);
+                while (tmp[2] > 0.01)
+                    tmp[2] *= 0.01;
                 list[i] = tmp;
             });
             return list;

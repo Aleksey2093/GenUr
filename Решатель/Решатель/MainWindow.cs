@@ -152,7 +152,7 @@ namespace Решатель
         /// <param name="nowJ">значение J на текущей итерации</param>
         /// <param name="lamda">значение лямды на текущей итерации</param>
         /// <param name="t">значение промежутка времени от старта программы до момента который засек таймер</param>
-        public void setIterData(int iter, double nowJ, double lamda, TimeSpan t)
+        public void setIterData(string iter, double nowJ, double oldJ, double lamda, TimeSpan t)
         {
             try
             {
@@ -177,19 +177,20 @@ namespace Решатель
 
         private void button1Prov_Click(object sender, EventArgs e)
         {
-            new Thread(delegate()
+            //new Thread(delegate()
             {
                 if (koef != null && koef.Length > 0 && resUr != null && listPeremens != null
                     && resUr.Count != 0 && listPeremens.Count != 0)
                 {
                     double[][] list = new ProvY().runProv(listPeremens, resUr, koef);
-                    Invoke(new MethodInvoker(() =>
-                    {
-                        richTextBox3.Text = "";
-                        list.ToList().ForEach((x) => { richTextBox3.Text += x[2] + "\n"; });
-                    }));
+                    if (list != null)
+                        Invoke(new MethodInvoker(() =>
+                        {
+                            richTextBox3.Text = "";
+                            list.ToList().ForEach((x) => { richTextBox3.Text += x[2] + "\n"; });
+                        }));
                 }
-            }).Start();
+            }//).Start();
         }
 
         private void MainWindow_Load(object sender, EventArgs e)

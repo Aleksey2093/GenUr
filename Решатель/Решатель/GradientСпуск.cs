@@ -70,20 +70,20 @@ namespace Решатель
                 Thread.Sleep(60000);
                     TimeSpan end = DateTime.Now - starttime;
                     Console.WriteLine(iter + ")\tJ: " + nowJ + "\tla: " + la + "\t time" + (end));
-                    mainWindow.setIterData(iter, nowJ, la, (end));
+                    mainWindow.setIterData(iter.ToString(), nowJ, oldJ, la, (end));
             }
         }
         DateTime starttime;
         public double[] runСпуск()
         {
+            la = 0.0001;
             starttime = DateTime.Now;
             argdelta = (1.0 / ylean.Length);
             argJb = (1.0 / ylean.Length / 2.0);
             double tmpold; oldJ = 0;
-            nowJ = getJ(); bool proh = true;
+            nowJ = getJ();
             Thread thread = new Thread(delegate() { shetchik(); });
             thread.Start();
-        rwa:
             while (Math.Abs(oldJ - nowJ) > eps)
             {
             ret:
@@ -105,17 +105,11 @@ namespace Решатель
                 {
                     la = la * 2.0;
                 }
-                eps = oldJ * 0.000000001;
+                eps = oldJ * 0.00001;
             }
-            if (!proh)
-            {
-                oldJ = 0;
-                proh = false;
-                goto rwa;
-            }
+            mainWindow.setIterData("finish " + iter, nowJ, oldJ, la, (starttime - DateTime.Now));
+            Console.WriteLine("finish "+iter+"\t" + nowJ + "\t" + la, (starttime - DateTime.Now));
             iter = -1;
-            mainWindow.setIterData(iter, nowJ, la, (starttime - DateTime.Now));
-            Console.WriteLine("finish \t" + nowJ + "\t" + la, (starttime - DateTime.Now));
             return (double[])koef.Clone();
         }
     }
